@@ -1,0 +1,2155 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spice Garden - POS System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+      :root {
+        --primary: #ff6b6b;
+        --secondary: #ffbe76;
+        --accent: #6c5ce7;
+        --light: #f9f7fe;
+        --dark: #2d3436;
+        --success: #00b894;
+        --warning: #fdcb6e;
+        --danger: #d63031;
+        --info: #0984e3;
+        --text-secondary: #555555;
+        --indian-red: #CD5C5C;
+        --indian-green: #138808;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+      }
+      body {
+        background-color: #f8f9fa;
+        color: var(--dark);
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      header {
+        text-align: center;
+        margin-bottom: 30px;
+        position: relative;
+      }
+      .logo {
+        font-size: 2.5rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+      }
+      h1 {
+        color: var(--accent);
+        margin-bottom: 5px;
+        font-weight: 700;
+      }
+      .subtitle {
+        color: var(--secondary);
+        font-size: 1.2rem;
+        margin-bottom: 20px;
+      }
+      .tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid var(--secondary);
+        padding-bottom: 10px;
+      }
+      .tab {
+        padding: 12px 24px;
+        background: none;
+        border: none;
+        font-size: 1.1rem;
+        cursor: pointer;
+        color: var(--dark);
+        position: relative;
+        transition: all 0.3s;
+        border-radius: 8px 8px 0 0;
+      }
+      .tab.active {
+        background-color: var(--secondary);
+        color: white;
+        font-weight: 600;
+      }
+      .tab:hover {
+        background-color: rgba(255, 190, 118, 0.2);
+      }
+      .tab-content {
+        display: none;
+      }
+      .tab-content.active {
+        display: block;
+      }
+      .category-nav {
+        display: flex;
+        overflow-x: auto;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 10px 0;
+        scrollbar-width: thin;
+      }
+      .category-btn {
+        padding: 8px 16px;
+        background: white;
+        border: 1px solid var(--secondary);
+        border-radius: 20px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.3s;
+      }
+      .category-btn:hover,
+      .category-btn.active {
+        background-color: var(--secondary);
+        color: white;
+      }
+      .menu-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 30px;
+      }
+      .category-title {
+        grid-column: 1 / -1;
+        color: var(--accent);
+        font-size: 1.5rem;
+        margin: 20px 0 10px;
+        padding-bottom: 10px;
+        border-bottom: 2px dashed var(--secondary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .category-filters {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .sub-filter-btn {
+        width: 28px;
+        height: 28px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        transition: all 0.2s;
+        background-color: #f8f9fa;
+      }
+      .sub-filter-btn:hover {
+        transform: scale(1.1);
+        border-color: var(--secondary);
+      }
+      .sub-filter-btn.active {
+        background-color: var(--secondary);
+        color: white;
+        border-color: var(--secondary);
+        box-shadow: 0 0 8px rgba(255, 190, 118, 0.7);
+      }
+      .menu-item {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+      .menu-item:hover {
+        transform: translateY(-5px);
+      }
+      .item-quantity-badge {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        background-color: var(--primary);
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transform: scale(0);
+        transition: transform 0.2s ease-out;
+        z-index: 5;
+      }
+      .item-quantity-badge.visible {
+        transform: scale(1);
+      }
+      .menu-item-image {
+        height: 150px;
+        width: 100%;
+        object-fit: cover;
+        border-bottom: 3px solid var(--secondary);
+      }
+      .menu-item-details {
+        padding: 12px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .menu-item-name {
+        font-weight: 600;
+        font-size: 1rem;
+        margin-bottom: 5px;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .menu-item-price {
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .menu-item-info {
+        font-size: 0.8rem;
+        color: #555;
+        margin: 8px 0;
+      }
+      .info-description {
+        margin-bottom: 4px;
+        line-height: 1.4;
+      }
+      .info-calories {
+        font-weight: 600;
+        color: var(--accent);
+      }
+      .menu-item-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-top: auto;
+      }
+      .quantity-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .quantity-btn {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: none;
+        background-color: var(--secondary);
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.3s;
+        font-size: 1.1rem;
+      }
+      .quantity-btn:hover {
+        background-color: var(--primary);
+      }
+      .order-item-container {
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+      .order-item-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .order-item-details {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .order-item-name {
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .order-item-price {
+        color: var(--primary);
+        font-weight: 600;
+      }
+      .order-item-addons {
+        font-size: 0.8rem;
+        color: #777;
+        padding-left: 85px;
+        margin-top: 4px;
+      }
+      .item-note-container {
+        font-size: 0.8rem;
+        color: var(--info);
+        padding-left: 85px;
+        margin-top: 5px;
+        font-style: italic;
+      }
+      .add-note-btn {
+        margin-left: 10px;
+        color: var(--accent);
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+      .add-note-btn:hover {
+        color: var(--primary);
+      }
+      .order-section {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+      }
+      .order-title {
+        color: var(--accent);
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px dashed var(--secondary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      #total-items-count {
+        background-color: var(--secondary);
+        color: white;
+        font-size: 0.9rem;
+        padding: 4px 10px;
+        border-radius: 15px;
+        font-weight: 600;
+      }
+      .order-items {
+        max-height: 300px;
+        overflow-y: auto;
+        margin-bottom: 20px;
+      }
+      .order-summary {
+        border-top: 2px dashed var(--secondary);
+        padding-top: 15px;
+      }
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+      }
+      .summary-label {
+        font-weight: 500;
+      }
+      .summary-value {
+        font-weight: 600;
+      }
+      .total {
+        font-size: 1.2rem;
+        color: var(--primary);
+        margin: 15px 0;
+        padding-top: 10px;
+        border-top: 2px solid var(--secondary);
+      }
+      .action-buttons {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+      }
+      .btn {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .btn.btn-sm {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+      }
+      .btn-primary {
+        background-color: var(--primary);
+        color: white;
+      }
+      .btn-primary:hover {
+        background-color: #ff5252;
+      }
+      .btn-secondary {
+        background-color: var(--secondary);
+        color: white;
+      }
+      .btn-secondary:hover {
+        background-color: #ffa94d;
+      }
+      .btn-success {
+        background-color: var(--success);
+        color: white;
+      }
+      .btn-success:hover {
+        background-color: #00a382;
+      }
+      .btn-warning {
+        background-color: var(--warning);
+        color: var(--dark);
+      }
+      .btn-warning:hover {
+        background-color: #ffc107;
+      }
+      .btn-whatsapp {
+        background-color: #25D366;
+        color: white;
+      }
+      .btn-whatsapp:hover {
+        background-color: #128C7E;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      .form-label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+      .form-control {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+      }
+      .toggle-group {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .toggle-btn {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        background: #f8f9fa;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .toggle-btn.active {
+        background-color: var(--secondary);
+        color: white;
+        border-color: var(--secondary);
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1001;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.6);
+        justify-content: center;
+        align-items: center;
+      }
+      .modal-content {
+        background-color: #fefefe;
+        margin: auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 90%;
+        max-width: 500px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      }
+      .modal-header {
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .modal-title {
+        font-size: 1.5rem;
+        color: var(--accent);
+      }
+      .addon-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .addon-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+      }
+      .addon-item input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+      }
+      .addon-item label {
+        flex-grow: 1;
+        cursor: pointer;
+      }
+      .addon-details {
+        color: var(--primary);
+        font-weight: 500;
+        font-size: 0.9em;
+      }
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+      .bill-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        justify-content: center;
+        align-items: flex-start;
+        overflow: auto;
+        padding: 40px 20px;
+      }
+      .bill-container {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+      .bill-content {
+        background: white;
+        border-radius: 12px;
+        width: 100%;
+        padding: 20px;
+        box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        margin-bottom: 20px;
+        max-height: 80vh;
+        overflow-y: auto;
+      }
+      .bill-header {
+        text-align: center;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px dashed var(--secondary);
+      }
+      .bill-number {
+        font-weight: 600;
+        color: var(--accent);
+        margin-bottom: 5px;
+      }
+      .bill-details {
+        margin-bottom: 20px;
+      }
+      .bill-items {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+      .bill-items th,
+      .bill-items td {
+        padding: 8px 5px;
+        text-align: left;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+      }
+      .bill-items th {
+        font-weight: 600;
+        color: var(--accent);
+      }
+      .bill-items td:first-child {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .bill-items .addon-row td {
+        display: table-cell;
+        padding-left: 20px;
+        font-size: 0.9em;
+        color: #555;
+        border-bottom: 1px dotted #eee;
+      }
+      .bill-items .note-row td {
+        display: table-cell;
+        padding-left: 20px;
+        font-size: 0.85em;
+        color: var(--info);
+        font-style: italic;
+        border-bottom: 1px dotted #eee;
+        line-height: 1.3;
+      }
+      .bill-summary {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 2px dashed var(--secondary);
+      }
+      .bill-calories-info {
+        text-align: center;
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #f9f7fe;
+        border: 1px dashed var(--accent);
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+      .bill-calories-total {
+        font-weight: bold;
+        color: var(--accent);
+      }
+      .nutrition-note {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        margin-top: 5px;
+      }
+      .bill-footer {
+        text-align: center;
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 2px dashed var(--secondary);
+        color: #777;
+        font-size: 0.9rem;
+      }
+      .bill-fee-explanations {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid #eee;
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        text-align: left;
+      }
+      .fee-explanation-item {
+        margin-bottom: 8px;
+        line-height: 1.4;
+      }
+      .fee-explanation-item b {
+        font-weight: 600;
+      }
+      .print-footer {
+        margin-top: 15px;
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: var(--primary);
+      }
+      .cat-icon {
+        font-size: 2rem;
+      }
+      .payment-section {
+        border: 2px dashed var(--secondary);
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+      }
+      .qr-code {
+        width: 180px;
+        height: 180px;
+        margin: 10px auto;
+        display: block;
+      }
+      .payment-note {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 0.7rem;
+        color: var(--text-secondary);
+        margin-top: 10px;
+        margin-bottom: 5px;
+        font-weight: 50;
+      }
+      .upi-icon {
+        justify-content: center;
+        align-items: center;
+        margin-top: 0px;
+        width: 20px;
+        height: 20px;
+        fill: #777;
+      }
+      .upi-icon.large {
+        width: 26px !important;
+        height: 26px !important;
+        justify-content: center;
+        align-items: center;
+      }
+      .recent-orders {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+      .order-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        position: relative;
+      }
+      .order-card-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+      .order-card-title {
+        font-weight: 600;
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .order-card-date {
+        color: #777;
+      }
+      .order-card-items {
+        margin-bottom: 15px;
+      }
+      .order-card-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 5px;
+      }
+      .order-card-total {
+        font-weight: 600;
+        color: var(--primary);
+        text-align: right;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px dashed #eee;
+      }
+      .order-card-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+      }
+      .recent-orders-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: flex-end;
+        flex-wrap: wrap;
+      }
+      .customer-details {
+        margin-bottom: 10px;
+      }
+      .customer-details div {
+        margin-bottom: 5px;
+      }
+      .bill-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        gap: 15px;
+      }
+      .order-date-header {
+        grid-column: 1 / -1;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--primary);
+        margin-top: 20px;
+        margin-bottom: 10px;
+        padding-bottom: 5px;
+        border-bottom: 2px solid var(--secondary);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .order-checkbox {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+      }
+      .veg-icon, .non-veg-icon, .egg-icon, .seafood-icon {
+        width: 16px;
+        height: 16px;
+        display: inline-block;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        flex-shrink: 0;
+        vertical-align: middle;
+        margin-bottom: 2px;
+      }
+      .sub-filter-btn .veg-icon, .sub-filter-btn .non-veg-icon, 
+      .sub-filter-btn .egg-icon, .sub-filter-btn .seafood-icon {
+        width: 18px;
+        height: 18px;
+      }
+      .veg-icon {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%234CAF50' stroke-width='2' rx='2'/%3E%3Ccircle cx='12' cy='12' r='6' fill='%234CAF50'/%3E%3C/svg%3E");
+      }
+      .non-veg-icon {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%23E53935' stroke-width='2' rx='2'/%3E%3Cpath d='m12 8l5 8H7z' fill='%23E53935'/%3E%3C/svg%3E");
+      }
+      .egg-icon {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%23ff9800' stroke-width='2' rx='2'/%3E%3Ccircle cx='12' cy='12' r='6' fill='%23ff9800'/%3E%3C/svg%3E");
+      }
+      .seafood-icon {
+         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%2303a9f4' stroke-width='2' rx='2'/%3E%3Cpath fill='%2303a9f4' d='M21.92,11.6C21.46,10.1,19.78,9,18,9h-1.12c-0.34,0-0.67-0.17-0.85-0.45L14.7,6.47c-0.53-0.81-1.5-1.28-2.55-1.28h-0.29 c-1.05,0-2.02,0.47-2.55,1.28l-1.33,2.08C7.8,8.83,7.47,9,7.12,9H6c-1.78,0-3.46,1.1-3.92,2.6C1.61,13.08,2.2,14.9,3.5,16 c1.18,1,2.96,1.5,4.5,1.5h8c1.54,0,3.32-0.5,4.5-1.5C21.8,14.9,22.39,13.08,21.92,11.6z M7,13c-0.83,0-1.5-0.67-1.5-1.5S6.17,10,7,10 s1.5,0.67,1.5,1.5S7.83,13,7,13z M17,13c-0.83,0-1.5-0.67-1.5-1.5S16.17,10,17,10s1.5,0.67,1.5,1.5S17.83,13,17,13z'/%3E%3C/svg%3E");
+      }
+      .spicy-icon {
+        color: var(--danger);
+        font-size: 0.9em;
+      }
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 2px solid var(--secondary);
+        color: #777;
+        font-size: 0.9rem;
+      }
+      @media (max-width: 1024px) {
+        .menu-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+      @media (max-width: 900px) {
+        .menu-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 768px) {
+        .menu-grid {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+        }
+        .menu-item-image {
+          height: 120px;
+        }
+        .menu-item-details {
+          padding: 8px;
+        }
+        .menu-item-name {
+          font-size: 0.9rem;
+        }
+        .menu-item-price {
+          font-size: 0.85rem;
+        }
+        .quantity-btn {
+          width: 24px;
+          height: 24px;
+          font-size: 0.7rem;
+        }
+        .action-buttons {
+          flex-direction: column;
+        }
+        .bill-actions {
+          flex-direction: column;
+        }
+        .recent-orders-actions {
+          justify-content: flex-start;
+        }
+      }
+      @media (max-width: 600px) {
+        .menu-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (max-width: 400px) {
+        .menu-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo"> <i class="fas fa-utensils"></i> Spice Garden </div>
+        <h1>POS System</h1>
+        <div class="subtitle">Taste the authentic flavors of India</div>
+      </header>
+      <div class="tabs">
+        <button class="tab active" data-tab="main-menu"> <i class="fas fa-utensils"></i> Main Menu </button>
+        <button class="tab" data-tab="recent-orders"> <i class="fas fa-history"></i> Recent Orders </button>
+      </div>
+      <div class="tab-content active" id="main-menu">
+        <div class="category-nav"></div>
+        <div class="menu-grid" id="menu-grid"></div>
+        <div class="order-section">
+          <h2 class="order-title">
+            <span><i class="fas fa-receipt"></i> Order Summary</span>
+            <span id="total-items-count">Total Items: 0</span>
+          </h2>
+          <div class="order-items" id="order-items">
+            <div class="empty-order">No items added yet</div>
+          </div>
+          <div class="order-summary">
+            <div class="summary-row"> <span class="summary-label">Subtotal:</span> <span class="summary-value" id="subtotal">₹0</span> </div>
+            <div class="summary-row" id="discount-row" style="display: none;">
+              <span class="summary-label" id="discount-label">Discount:</span>
+              <span class="summary-value" id="discount-amount">₹0</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Discount:</label>
+              <div class="toggle-group">
+                <button class="toggle-btn active" id="discount-type-amount">₹</button>
+                <button class="toggle-btn" id="discount-type-percent">%</button>
+                <input type="number" class="form-control" id="discount-value" placeholder="Discount value" min="0" step="0.01">
+              </div>
+            </div>
+            <div class="summary-row" id="packing-charge-row" style="display: none;"> <span class="summary-label">Packing Charge:</span> <span class="summary-value" id="packing-charge">₹0</span> </div>
+            <div class="summary-row" id="handling-fee-row" style="display: none;"> <span class="summary-label">Handling Fee:</span> <span class="summary-value" id="handling-fee">₹0</span> </div>
+            <div class="summary-row" id="eco-saver-row" style="display: none;"> <span class="summary-label">Eco-Saver Charge:</span> <span class="summary-value" id="eco-saver-charge">₹0</span> </div>
+            <div class="summary-row" id="convenience-fee-row" style="display: none;"> <span class="summary-label">Convenience Fee:</span> <span class="summary-value" id="convenience-fee">₹0</span> </div>
+            <div class="summary-row"> <span class="summary-label">CGST (2.5%):</span> <span class="summary-value" id="cgst">₹0</span> </div>
+            <div class="summary-row"> <span class="summary-label">SGST (2.5%):</span> <span class="summary-value" id="sgst">₹0</span> </div>
+            <div class="summary-row" id="round-off-row" style="display: none;"> <span class="summary-label">Round Off:</span> <span class="summary-value" id="round-off-value">₹0</span> </div>
+            <div class="summary-row total"> <span class="summary-label">Net Total:</span> <span class="summary-value" id="net-total">₹0</span> </div>
+            <div class="form-group">
+              <label class="form-label">Payment Method:</label>
+              <div class="toggle-group">
+                <button class="toggle-btn active" data-payment="cash">Cash</button>
+                <button class="toggle-btn" data-payment="upi">UPI</button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Eating Option:</label>
+              <div class="toggle-group">
+                <button class="toggle-btn active" data-option="dine-in">Dine In</button>
+                <button class="toggle-btn" data-option="takeaway">Takeaway</button>
+              </div>
+            </div>
+            <div id="table-selection" class="form-group">
+              <label class="form-label">Table Number:</label>
+              <select class="form-control" id="table-number">
+                <option value="1">Table 1</option>
+                <option value="2">Table 2</option>
+                <option value="3">Table 3</option>
+                <option value="4">Table 4</option>
+                <option value="5">Table 5</option>
+                <option value="6">Table 6</option>
+                <option value="7">Table 7</option>
+                <option value="8">Table 8</option>
+                <option value="9">Table 9</option>
+                <option value="10">Table 10</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Customer Name:</label>
+              <input type="text" class="form-control" id="customer-name" placeholder="Enter customer name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Customer Phone:</label>
+              <input type="tel" class="form-control" id="customer-phone" placeholder="Enter customer phone">
+            </div>
+            <div class="action-buttons">
+              <button class="btn btn-primary" id="print-bill"> <i class="fas fa-receipt"></i> Print Bill </button>
+              <button class="btn btn-success" id="new-order"> <i class="fas fa-plus"></i> New Order </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tab-content" id="recent-orders">
+        <h2 class="order-title">
+          <span><i class="fas fa-history"></i> Recent Orders</span>
+        </h2>
+        <div class="recent-orders-actions">
+          <button class="btn btn-secondary" id="select-all"> <i class="fas fa-check-square"></i> Select All </button>
+          <button class="btn btn-warning" id="import-json"> <i class="fas fa-file-import"></i> Import JSON </button>
+          <button class="btn btn-primary" id="export-json"> <i class="fas fa-file-export"></i> Export Selected JSON </button>
+          <button class="btn btn-info" id="export-csv"> <i class="fas fa-file-csv"></i> Export to CSV </button>
+          <button class="btn btn-danger" id="delete-selected"> <i class="fas fa-trash"></i> Delete Selected </button>
+        </div>
+        <div class="recent-orders" id="recent-orders-list">
+          <div class="empty-orders">No recent orders found</div>
+        </div>
+      </div>
+      <footer> Spice Garden POS System © 2025 | Made with <b style="color: var(--indian-red); font-size: 22px; font-weight: bolder !important;">ᡣ𐭩</b> by <a href="https://wa.me/918777845713?text=Hi%21%20I%20came%20across%20your%20Spice%20Garden%20POS%20App%20and%20I%E2%80%99d%20love%20to%20talk%20more%20about%20it.%20Is%20this%20a%20good%20time%20to%20chat%3F" style="text-decoration: none; color: var(--indian-green); font-weight: bolder; font-size: 16px;">SHOVITH</a> </footer>
+    </div>
+    <div id="addon-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="addon-modal-title" class="modal-title">Add Extras</h2>
+        </div>
+        <div id="addon-list" class="addon-list"></div>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="cancel-addon">Cancel</button>
+          <button class="btn btn-primary" id="confirm-addon">Add to Order</button>
+        </div>
+      </div>
+    </div>
+    <div class="bill-modal" id="bill-modal">
+      <div class="bill-container">
+        <div class="bill-content" id="bill-content">
+          <div class="bill-header">
+            <div class="logo"> <i class="fas fa-utensils"></i> Spice Garden </div>
+            <div class="bill-number" id="bill-number"></div>
+            <div id="bill-date"></div>
+          </div>
+          <div class="bill-details">
+            <div class="customer-details">
+              <div id="bill-customer-name"></div>
+              <div id="bill-customer-phone"></div>
+              <div id="bill-table"></div>
+            </div>
+          </div>
+          <table class="bill-items">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Qty</th>
+                <th>Price</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody id="bill-items-list"></tbody>
+          </table>
+          <div class="bill-summary"></div>
+          <div id="bill-calories-info" class="bill-calories-info" style="display: none;">
+            <div id="bill-calories-total" class="bill-calories-total"></div>
+            <div id="nutrition-note" class="nutrition-note" style="display: none;"></div>
+          </div>
+          <div class="bill-footer">
+            <div class="payment-section">
+              <div id="cash-payment-details" style="display: none;"> Payment Method: Cash<br>
+                <div style="margin: 10px 0; font-weight: 600; padding: 10px; border: 2px dashed var(--secondary); border-radius: 8px;"> Kindly pay the exact amount at the billing counter </div>
+              </div>
+              <div id="upi-payment-details" style="display: none;"> Payment Method: UPI<br> <img src="" alt="UPI QR Code" class="qr-code" id="bill-qr-code">
+                <div class="payment-note"> <i class="fas fa-info-circle"></i> Scan the QR code to pay instantly via any UPI app </div>
+                <div>
+                  <h6 style="color: var(--text-secondary); font-weight: 50; margin-bottom: 10px;">──────────── Supported Apps ────────────</h6>
+                  <div style="display: flex; align-items: center; justify-content: center; gap: 15px;">
+                    <svg class="upi-icon large" viewBox="0 0 24 24" fill="#555555">
+                      <path d="M15.85 8.167a.204.204 0 0 0-.04.004c-.68.19-.543 1.148-1.781 1.23h-.12a.23.23 0 0 0-.052.005h-.001a.24.24 0 0 0-.184.235v1.09c0 .134.106.241.237.241h.645v4.623c0 .132.104.238.233.238h1.058a.236.236 0 0 0 .233-.238v-4.623h.6c.13 0 .236-.107.236-.241v-1.09a.239.239 0 0 0-.236-.24h-.612V8.386a.218.218 0 0 0-.216-.22zm4.225 1.17c-.398 0-.762.15-1.042.395v-.124a.238.238 0 0 0-.234-.224h-1.07a.24.24 0 0 0-.236.242v5.92a.24.24 0 0 0 .236.242h1.07c.12 0 .217-.091.233-.209v-4.25a.393.393 0 0 1 .371-.408h.196a.41.41 0 0 1 .226.09.405.405 0 0 1 .145.319v4.074l.004.155a.24.24 0 0 0 .237.241h1.07a.239.239 0 0 0 .235-.23l-.001-4.246c0-.14.062-.266.174-.34a.419.419 0 0 1 .196-.068h.198c.23.02.37.2.37.408.005 1.396.004 2.8.004 4.224a.24.24 0 0 0 .237.241h1.07c.13 0 .236-.108.236-.241v-4.543c0-.31-.034-.442-.08-.577a1.601 1.601 0 0 0-1.51-1.09h-.015a1.58 1.58 0 0 0-1.152.5c-.291-.308-.7-.5-1.153-.5zM.232 9.4A.234.234 0 0 0 0 9.636v5.924c0 .132.096.238.216.241h1.09c.13 0 .237-.107.237-.24l.004-1.658H2.57c.857 0 1.453-.605 1.453-1.481v-1.538c0-.877-.596-1.484-1.453-1.484H.232zm9.032 0a.239.239 0 0 0-.237.241v2.47c0 .94.657 1.608 1.579 1.608h.675s.016 0 .037.004a.253.253 0 0 1 .222.253c0 .13-.096.235-.219.251l-.018.004-.303.006H9.739a.239.239 0 0 0-.236.24v1.09a.24.24 0 0 0 .236.242h1.75c.92 0 1.577-.669 1.577-1.608v-4.56a.239.239 0 0 0-.236-.24h-1.07a.239.239 0 0 0-.236.24c-.005.787 0 1.525 0 2.255a.253.253 0 0 1-.25.25h-.449a.253.253 0 0 1-.25-.255c.005-.754-.005-1.5-.005-2.25a.239.239 0 0 0-.236-.24zm-4.004.006a.232.232 0 0 0-.238.226v1.023c0 .132.113.24.252.24h1.413c.112.017.2.1.213.23v.14c-.013.124-.1.214-.207.224h-.7c-.93 0-1.594.63-1.594 1.515v1.269c0 .88.57 1.506 1.495 1.506h1.94c.348 0 .63-.27.63-.6v-4.136c0-1.004-.508-1.637-1.72-1.637zm-3.713 1.572h.678c.139 0 .25.115.25.256v.836a.253.253 0 0 1-.25.256h-.1c-.192.002-.386 0-.578 0zm4.67 1.977h.445c.139 0 .252.108.252.24v.932a.23.23 0 0 1-.014.076.25.25 0 0 1-.238.164h-.445a.247.247 0 0 1-.252-.24v-.933c0-.132.113-.239.252-.239Z" />
+                    </svg>
+                    <svg class="upi-icon" viewBox="0 0 24 24" fill="#555555">
+                      <path d="M 13.283203 1.7246094 C 11.272645 1.7713212 9.3283181 2.8321981 8.2539062 4.6933594 L 8.0175781 5.0898438 L 7.8847656 5.0136719 C 7.1352305 4.5822534 6.2739566 4.4961243 5.4921875 4.7050781 C 4.7104184 4.9140319 4.0071518 5.4172959 3.5742188 6.1660156 L 0.79882812 10.962891 C -0.83938764 13.792318 0.14160377 17.441752 2.9765625 19.074219 L 4.7382812 20.087891 L 6.8730469 21.320312 L 7.7324219 21.814453 L 7.7324219 21.816406 C 7.743369 21.822726 7.7546485 21.827758 7.765625 21.833984 L 7.8007812 21.853516 L 7.8027344 21.851562 C 10.155083 23.160269 13.158663 22.340653 14.509766 20.001953 L 14.509766 20 L 15.236328 18.744141 L 15.765625 19.050781 L 15.767578 19.052734 C 17.267018 19.917237 19.212959 19.395621 20.078125 17.896484 L 23.333984 12.259766 C 24.692459 9.9065216 23.885663 6.8719436 21.544922 5.5 L 21.546875 5.4980469 C 21.541198 5.4947667 21.534982 5.4934865 21.529297 5.4902344 C 21.525192 5.4878489 21.521693 5.4847971 21.517578 5.4824219 L 18.521484 3.7519531 L 16.380859 2.515625 C 15.67214 2.1063222 14.913385 1.8617949 14.146484 1.7675781 C 13.858897 1.7322468 13.570426 1.7179363 13.283203 1.7246094 z M 13.128906 3.7226562 C 13.886567 3.6702474 14.668689 3.836751 15.380859 4.2480469 L 17.316406 5.3652344 C 16.542959 5.7440937 15.870516 6.3458944 15.410156 7.1425781 L 10.753906 15.205078 C 10.339891 15.921736 9.4543502 16.157816 8.7382812 15.744141 L 8.4902344 15.599609 L 8.7226562 15.197266 L 11.355469 10.650391 C 12.220664 9.1545054 11.695874 7.2091107 10.197266 6.3457031 L 9.75 6.0878906 L 9.9824219 5.6972656 L 9.9863281 5.6933594 C 10.671826 4.5058962 11.866138 3.8100043 13.128906 3.7226562 z M 6.4472656 6.5957031 C 6.5966747 6.6151283 6.7454863 6.6648029 6.8867188 6.7460938 L 9.1992188 8.0800781 C 9.7626106 8.4046706 9.9458515 9.0903224 9.6230469 9.6484375 L 6.9921875 14.195312 L 6.2734375 15.4375 C 5.7434398 16.352759 5.62087 17.36909 5.7285156 18.351562 L 3.9746094 17.341797 C 2.0755681 16.248264 1.4335126 13.857416 2.5292969 11.964844 L 5.3046875 7.1679688 L 5.3066406 7.1679688 C 5.4687105 6.8876885 5.7218785 6.7007962 6.0058594 6.625 C 6.1478498 6.587102 6.2978565 6.5762779 6.4472656 6.5957031 z M 19.123047 6.8964844 C 19.595183 6.8641365 20.082614 6.9703639 20.529297 7.2246094 C 21.946227 8.0521329 22.422962 9.8369585 21.601562 11.259766 L 18.345703 16.896484 C 18.021576 17.458123 17.333405 17.642885 16.769531 17.320312 L 16.236328 17.009766 L 19.089844 12.068359 L 19.089844 12.066406 C 19.957449 10.567154 19.436737 8.6197447 17.9375 7.7539062 L 17.935547 7.7519531 L 17.613281 7.5683594 C 18.034068 7.1744017 18.563456 6.9348241 19.123047 6.8964844 z M 16.507812 9.2421875 L 16.9375 9.4863281 C 17.501708 9.8121689 17.686466 10.501929 17.359375 11.066406 L 17.357422 11.066406 L 12.777344 19.001953 C 11.967955 20.403957 10.224853 20.883097 8.8105469 20.119141 C 7.926484 19.500143 7.499338 18.454288 7.65625 17.429688 L 7.7382812 17.476562 C 9.3902124 18.430889 11.532343 17.85642 12.486328 16.205078 L 16.507812 9.2421875 z" />
+                    </svg>
+                    <svg class="upi-icon" viewBox="0 0 24 24" fill="#555555">
+                      <path d="M 10.206 9.941h2.949v4.692c-.402.201-.938.268-1.34.268-1.072 0-1.609-.536-1.609-1.743V9.941zm13.47 4.816c-1.523 6.449-7.985 10.442-14.433 8.919C2.794 22.154-1.199 15.691.324 9.243 1.847 2.794 8.309-1.199 14.757.324c6.449 1.523 10.442 7.985 8.919 14.433zm-6.231-5.888a.887.887 0 0 0-.871-.871h-1.609l-3.686-4.222c-.335-.402-.871-.536-1.407-.402l-1.274.401c-.201.067-.268.335-.134.469l4.021 3.82H6.386c-.201 0-.335.134-.335.335v.67c0 .469.402.871.871.871h.938v3.217c0 2.413 1.273 3.82 3.418 3.82.67 0 1.206-.067 1.877-.335v2.145c0 .603.469 1.072 1.072 1.072h.938a.432.432 0 0 0 .402-.402V9.874h1.542c.201 0 .335-.134.335-.335v-.70z" />
+                    </svg>
+                    <svg class="upi-icon large" viewBox="0 0 256 256" fill="#555555" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                      <g transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
+                        <path d="M 24.335 20.026 c -2.405 0 -4.929 1.116 -6.889 2.856 l -0.22 -1.493 c -0.056 -0.376 -0.357 -0.694 -0.797 -0.694 h -2.093 c -0.383 0 -0.695 0.313 -0.695 0.694 c 0 9.498 0 18.997 0 28.495 c 0 0.382 0.313 0.694 0.695 0.694 h 2.735 c 0.382 0 0.694 -0.313 0.694 -0.694 v -9.84 c 1.735 1.547 3.991 2.437 6.403 2.437 c 5.73 0 9.118 -4.961 9.118 -11.135 C 33.286 25.576 31.071 20.026 24.335 20.026 z M 27.072 37.69 c -1.066 1.051 -2.256 1.337 -4.048 1.337 c -1.595 0 -3.693 -0.832 -5.26 -1.99 V 25.374 c 1.632 -1.253 3.713 -1.931 5.448 -1.931 c 4.53 0 5.764 3.562 5.764 7.641 C 29.002 33.834 28.496 36.286 27.072 37.69 z" />
+                        <path d="M 53.316 41.267 c 0 0.382 -0.313 0.694 -0.697 0.694 h -2.042 c -0.441 0 -0.742 -0.319 -0.799 -0.694 l -0.205 -1.39 c -0.938 0.794 -2.09 1.492 -3.339 1.978 c -2.401 0.933 -5.17 1.087 -7.516 -0.354 c -1.697 -1.041 -2.597 -3.077 -2.597 -5.178 c 0 -1.625 0.501 -3.236 1.611 -4.405 c 1.481 -1.598 3.629 -2.383 6.221 -2.383 c 1.566 0 3.807 0.184 5.438 0.717 v -2.797 c 0 -2.844 -1.197 -4.074 -4.354 -4.074 c -2.413 0 -4.259 0.364 -6.827 1.163 c -0.411 0.014 -0.652 -0.299 -0.652 -0.681 v -1.595 c 0 -0.383 0.327 -0.753 0.681 -0.865 c 1.834 -0.8 4.433 -1.298 7.195 -1.39 c 3.601 0 7.881 0.812 7.881 6.351 V 41.267 z M 49.392 37.183 v -4.22 c -1.37 -0.375 -3.638 -0.53 -4.515 -0.53 c -1.386 0 -2.904 0.328 -3.697 1.181 c -0.592 0.626 -0.86 1.524 -0.86 2.392 c 0 1.123 0.388 2.249 1.296 2.806 c 1.054 0.716 2.689 0.629 4.225 0.192 C 47.317 38.586 48.704 37.844 49.392 37.183 z" />
+                        <path d="M 57.179 49.847 c 0 -0.518 0 -0.983 0 -1.501 c 0 -0.427 0.21 -0.722 0.655 -0.695 c 0.832 0.118 2.008 0.236 2.844 0.064 c 1.091 -0.227 1.873 -1 2.336 -2.06 c 0.652 -1.492 1.084 -2.695 1.357 -3.484 l -8.282 -20.518 c -0.14 -0.348 -0.181 -0.994 0.514 -0.994 h 2.895 c 0.552 0 0.777 0.351 0.901 0.694 l 6.005 16.666 l 5.732 -16.666 c 0.117 -0.341 0.352 -0.694 0.899 -0.694 h 2.73 c 0.691 0 0.652 0.645 0.514 0.994 l -8.216 21.158 c -1.063 2.816 -2.479 7.302 -5.669 8.081 c -1.599 0.418 -3.617 0.267 -4.802 -0.229 C 57.293 50.513 57.179 50.112 57.179 49.847 z" />
+                        <path d="M 84.123 48.992 c -2.8 0.039 -6.106 0.666 -8.614 2.426 c -0.774 0.537 -0.638 1.283 0.223 1.184 c 2.82 -0.339 9.097 -1.1 10.219 0.334 c 1.125 1.434 -1.244 7.35 -2.291 9.996 c -0.324 0.789 0.361 1.116 1.084 0.516 c 4.692 -3.93 5.911 -12.169 4.951 -13.354 C 89.214 49.501 86.923 48.953 84.123 48.992 z" />
+                        <path d="M 0.647 51.992 c -0.654 0.09 -0.936 0.919 -0.252 1.576 c 11.751 11.022 27.28 16.419 44.521 16.419 c 12.297 0 26.574 -4.012 36.429 -11.573 c 1.629 -1.257 0.241 -3.141 -1.43 -2.397 c -11.049 4.875 -23.051 7.225 -33.974 7.225 c -16.189 0 -31.86 -3.38 -44.539 -11.057 C 1.126 52.017 0.865 51.962 0.647 51.992 z" />
+                      </g>
+                    </svg>
+                    <svg class="upi-icon" viewBox="5 -15 143 143" fill="#555555" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                      <g id="Layer_2">
+                        <g id="Layer_1-2">
+                          <polygon points="109,40.5 44,57.9 44,41.6 109,24.2" />
+                          <polygon points="109,71.3 44,88.8 44,72.5 109,55.1" />
+                          <path d="M76.5,128C37,128,5,96,5,56.5S37-15,76.5-15S148,17,148,56.5c0,0,0,0,0,0C148,95.9,116,127.9,76.5,128z M76.5-0.4c-31.4,0-56.9,25.5-56.9,56.9s25.5,56.9,56.9,56.9c31.4,0,56.9-25.5,56.9-56.9c0,0,0,0,0,0 C133.3,25.1,107.9-0.4,76.5-0.4z" />
+                        </g>
+                      </g>
+                    </svg>
+                    <svg class="upi-icon" viewBox="0 0 32 32" fill="#555555" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M31.969 14.271c-.177-5.104-1.516-9.214-4.542-11.458S19.854-.208 14.141.063c-2.599.125-4.938.464-6.839 1.224c-1.958.786-3.474 1.896-4.583 3.438C.49 7.824-.198 12.506.047 17.897c.234 5.12 1.557 9.172 4.62 11.38c3.047 2.198 7.995 2.896 13.214 2.672c5.063-.214 9.177-1.552 11.38-4.62c2.198-3.063 2.896-7.578 2.708-13.057zM8.802 19.693h-.661v-1.417h.661c1.26 0 2.182-.974 2.182-2.182a2.181 2.181 0 0 0-2.182-2.182h-2.13a.174.174 0 0 0-.167.125v7.734H5.13v-7.734c0-.849.693-1.542 1.542-1.542h2.13c1.99 0 3.635 1.615 3.635 3.599c0 1.99-1.536 3.599-3.635 3.599m11.604 0h-1.391V15.99c-.031-1.047-1.141-2.089-2.323-2.089c-1.328 0-2.302 1.135-2.302 2.193c0 1.505 1.057 2.193 2.302 2.193h.495v1.406h-.495c-2.047 0-3.714-1.313-3.714-3.599c0-1.859 1.667-3.599 3.714-3.599c1.854 0 3.656 1.557 3.714 3.495zm1.766-6.959l1.813 3.719l-.786 1.599l-2.599-5.318zm1.682 9.292h-1.578l4.568-9.292h1.578z" />
+                    </svg>
+                    <svg class="upi-icon large" viewBox="0 0 122.88 60.05" xmlns="http://www.w3.org/2000/svg">
+                      <style type="text/css">
+                        .st0 {
+                          fill-rule: evenodd;
+                          clip-rule: evenodd;
+                          fill: var(--text-secondary);
+                        }
+                        .st1 {
+                          fill-rule: evenodd;
+                          clip-rule: evenodd;
+                          fill: var(--text-secondary);
+                        }
+                        .st2 {
+                          fill: var(--text-secondary);
+                        }
+                        .st3 {
+                          fill-rule: evenodd;
+                          clip-rule: evenodd;
+                          fill: #66686C;
+                        }
+                        .st4 {
+                          fill: var(--text-secondary);
+                        }
+                      </style>
+                      <g>
+                        <path class="st2" d="M111.45,19.26l-5.17,4.81l-0.17-0.13c0.59-2.19,1.18-4.39,1.78-6.58c1.5-5.45,3-10.89,4.51-16.34 c0-0.02,0-0.04,0-0.05c0-0.27,0.14-0.52,0.38-0.65c0.36-0.06,0.35,0.35,0.48,0.58c0.77,1.42,1.35,2.93,2.25,4.28 c0.85,2.06,1.84,4.11,2.91,6.06c0.13,0.2,0.21,0.43,0.21,0.67c0,0.41-0.21,0.8-0.56,1.02C115.82,15.02,113.64,17.15,111.45,19.26 L111.45,19.26z" />
+                        <path class="st4" d="M111.45,19.26c2.2-2.11,4.38-4.24,6.61-6.32c0.35-0.22,0.56-0.61,0.56-1.02c0-0.24-0.07-0.48-0.21-0.67 c-1.08-1.95-2.06-4-2.91-6.06l1.54-5.17c0.64,1.23,1.17,2.24,1.68,3.26c1.29,2.57,2.55,5.16,3.89,7.71 c0.18,0.25,0.27,0.55,0.27,0.86c0,0.51-0.26,0.99-0.7,1.26c-3.66,3.39-7.25,6.86-10.86,10.3c-0.23,0.3-0.54,0.53-0.9,0.65 C110.88,22.49,111.23,20.88,111.45,19.26L111.45,19.26L111.45,19.26z" />
+                        <path class="st3" d="M30.37,12.17c0.76,0.35,1.25,1.11,1.25,1.94c0,0.34-0.08,0.68-0.24,0.98c-0.6,1.95-1.09,3.92-1.63,5.89 c-0.15,1.86-1.71,3.29-3.57,3.29c-0.21,0-0.42-0.02-0.63-0.06c-8.27,0-16.53,0.01-24.8,0.02c-0.65,0-0.89-0.06-0.68-0.79 C2.2,15.9,4.3,8.35,6.39,0.8C6.44,0.35,6.82,0,7.27,0c0.04,0,0.09,0,0.13,0.01c8.51,0.02,17.03,0.01,25.54,0.03 C33.06,0.02,33.18,0,33.3,0c0.95,0,1.71,0.77,1.71,1.71c0,0.24-0.05,0.47-0.15,0.69c-0.64,2.52-1.34,5.02-2.07,7.52 C32.4,11.02,31.5,11.86,30.37,12.17L30.37,12.17z M85.39,59.94h-4.84l6.72-24.26h4.83L85.39,59.94L85.39,59.94z M45.21,58.42 c-0.26,0.96-1.15,1.63-2.14,1.63H18.15c-0.68,0-1.19-0.23-1.52-0.69c-0.33-0.46-0.41-1.04-0.21-1.72l6.08-21.9l4.84,0l-5.43,19.56 h19.34l5.43-19.56l4.83,0L45.21,58.42L45.21,58.42L45.21,58.42z M82.88,36.44c-0.33-0.46-0.85-0.69-1.55-0.69l-26.57,0l-1.31,4.76 h24.17l-1.41,5.08H56.87v-0.01h-4.83l-4.01,14.48h4.83l2.69-9.71h21.73c0.68,0,1.32-0.23,1.92-0.69s0.99-1.04,1.18-1.72l2.69-9.71 C83.27,37.49,83.21,36.9,82.88,36.44L82.88,36.44L82.88,36.44z M50.48,9.77c2.78,0,5.56-0.05,8.34,0.03 C58.88,9.8,58.94,9.81,59,9.81c0.7,0,1.27-0.54,1.32-1.23c0.65-2.48,1.35-4.95,1.96-7.44C62.3,0.5,62.82,0,63.45,0 c0.09,0,0.17,0.01,0.26,0.03c0.46,0.03,0.92,0.05,1.39,0.05c0.45,0,0.91-0.02,1.36-0.05c0.74-0.04,0.91,0.18,0.7,0.91 c-1.05,3.72-2.05,7.46-3.07,11.18c-0.98,3.59-1.98,7.18-2.93,10.78c-0.02,0.75-0.63,1.35-1.38,1.35c-0.11,0-0.22-0.01-0.33-0.04 c-0.46-0.04-0.92-0.06-1.38-0.06c-0.42,0-0.84,0.02-1.26,0.05c-0.71,0.03-0.82-0.2-0.63-0.86c0.76-2.6,1.44-5.22,2.19-7.82 c0.22-0.76,0.12-1.07-0.78-1.06c-5.66,0.04-11.33,0.04-16.99,0.01c-0.06-0.01-0.12-0.01-0.18-0.01c-0.62,0-1.13,0.48-1.16,1.1 c-0.66,2.62-1.43,5.22-2.12,7.83c-0.04,0.48-0.44,0.84-0.92,0.84c-0.06,0-0.12-0.01-0.18-0.02c-0.48-0.03-0.98-0.04-1.46-0.04 c-0.5,0-1,0.02-1.49,0.05c-1.03,0.07-0.86-0.46-0.68-1.1c1.11-4.03,2.22-8.07,3.32-12.1c0.93-3.39,1.86-6.78,2.77-10.17 c0.03-0.46,0.41-0.82,0.87-0.82c0.04,0,0.09,0,0.13,0.01c1.05,0.05,2.11,0.05,3.16,0c0.73-0.03,0.81,0.24,0.63,0.88 c-0.75,2.67-1.44,5.36-2.21,8.03c-0.21,0.71-0.03,0.85,0.64,0.84C44.64,9.75,47.56,9.77,50.48,9.77L50.48,9.77z M73,0.11 c0.35,0,0.7,0,1.05,0c1.4,0,1.41,0,1.05,1.29c-1.96,7.1-3.92,14.21-5.89,21.31c-0.44,1.59-0.46,1.59-2.09,1.59 c-0.77,0-1.55-0.02-2.32,0.01c-0.69,0.03-0.83-0.2-0.64-0.88c1.87-6.66,3.71-13.33,5.55-20c0.23-0.7,0.42-1.41,0.56-2.13 c0-0.02,0-0.03,0-0.05c0-0.67,0.54-1.2,1.21-1.2c0.12,0,0.25,0.02,0.36,0.06c0.21,0.02,0.43,0.02,0.65,0.02 C72.65,0.12,72.83,0.12,73,0.11L73,0.11L73,0.11z M100.08,13.09c-0.81,0.72-1.62,1.42-2.41,2.15c-3.03,2.78-6.04,5.58-9.06,8.38 c-0.5,0.47-0.76,0.55-1.15-0.14c-2.23-3.91-4.5-7.79-6.76-11.68c-0.07-0.1-0.16-0.2-0.25-0.28c-0.34,0.43-0.56,0.96-0.61,1.51 c-0.95,3.38-1.87,6.77-2.77,10.17c-0.02,0.58-0.49,1.03-1.07,1.03c-0.07,0-0.14-0.01-0.21-0.02c-1.01-0.08-2.04-0.03-3.06-0.01 c-0.47,0.01-0.73-0.06-0.56-0.66c2.12-7.65,4.23-15.31,6.33-22.97c0.05-0.08,0.11-0.16,0.18-0.23c0.41,0.37,0.74,0.82,0.97,1.32 c2.86,4.76,5.71,9.52,8.56,14.29c0.64,1.07,0.62,1.05,1.58,0.23c5.16-4.4,10.32-8.8,15.5-13.18c1.04-0.88,2.07-1.77,3.2-2.73 c0.02,0.12,0.03,0.25,0.03,0.38c0,0.39-0.1,0.78-0.28,1.12c-1.96,7.19-3.95,14.37-5.9,21.55c-0.03,0.51-0.46,0.91-0.97,0.91 c-0.06,0-0.12-0.01-0.17-0.02c-0.5-0.03-1.01-0.04-1.51-0.04c-0.48,0-0.97,0.01-1.45,0.04c-0.84,0.05-0.91-0.26-0.7-0.99 c0.89-3.14,1.74-6.3,2.6-9.45c0.05-0.09,0.08-0.19,0.08-0.29C100.22,13.33,100.17,13.19,100.08,13.09L100.08,13.09L100.08,13.09z M11.05,4.76c5.39,0.07,10.76-0.01,16.14-0.01c0.95,0,1.72,0.77,1.72,1.72c0,0.24-0.05,0.48-0.15,0.71c-0.27,1.5-1.58,2.6-3.11,2.6 C20.33,9.77,15,9.77,9.67,9.8c-0.88,0-0.91-0.35-0.69-1.03c0.35-1,0.64-2.01,0.86-3.04c0.01-0.55,0.46-0.98,1.01-0.98 C10.92,4.74,10.98,4.75,11.05,4.76L11.05,4.76z M8.11,14.47c5.35,0,10.71,0.01,16.07,0.03c1.84,0.01,2.57,1.7,1.49,3.44 c-0.58,0.98-1.63,1.58-2.77,1.58c-5.25,0-10.49-0.06-15.74,0.01c-0.81,0.01-1.19-0.1-0.86-1.04c0.37-1.06,0.63-2.16,0.9-3.24 C7.27,14.8,7.66,14.47,8.11,14.47L8.11,14.47z" />
+                        <polygon class="st0" points="100.46,35.72 106.57,47.88 93.71,60.04 95.24,54.53 102.27,47.88 98.93,41.23 100.46,35.72" />
+                        <polygon class="st1" points="96.16,35.72 102.27,47.88 89.41,60.04 96.16,35.72" />
+                      </g>
+                    </svg>
+                    <svg class="upi-icon" viewBox="0 0 90 60" fill="#555555" xmlns="http://www.w3.org/2000/svg">
+                      <path d="m 63.337998,8.914391 c 0.9524,1.7462 1.58608,3.650221 1.82417,5.555216 h 9.12606 c -0.2381,-1.904995 -0.87167,-3.809016 -1.82417,-5.555216 z m -40.21977,5.663737 c -2.979499,0.0383 -5.656437,0.670163 -7.963339,1.746663 -2.460598,1.190601 -4.527218,2.780268 -6.273518,4.764569 -1.7462,1.984399 -3.01625,4.28457 -3.96875,6.903971 -0.9525,2.619399 -1.348754,5.395225 -1.348754,8.252725 0,3.175002 0.39804,6.11392 1.27124,8.733316 0.873,2.698702 2.145035,4.921459 3.891235,6.826459 1.7462,1.905004 3.805867,3.412274 6.345865,4.444174 2.460601,1.1112 5.31882,1.58646 8.573121,1.58647 2.222601,0 4.287332,-0.23834 6.351032,-0.87334 2.0638,-0.635 3.888417,-1.50691 5.555218,-2.69751 1.5875,-1.190596 3.015861,-2.697969 4.206462,-4.444169 1.1112,-1.7462 1.909265,-3.730726 2.464965,-5.953125 h -8.57312 c -0.793699,2.301798 -2.066025,4.046106 -3.653525,5.157306 -1.5875,1.1113 -3.731633,1.66915 -6.351032,1.66915 -1.905,0 -3.570197,-0.315846 -4.919596,-0.950846 -1.4288,-0.635 -2.537444,-1.591479 -3.410646,-2.702679 -0.952498,-1.1113 -1.590856,-2.377967 -2.067056,-3.886068 -0.4763,-1.4288 -0.63562,-3.016869 -0.63562,-4.604369 h 30.163534 c 0.3175,-3.016202 0.158078,-6.036013 -0.635622,-8.893513 -0.7938,-2.8575 -1.981456,-5.472121 -3.648355,-7.694621 -1.7462,-2.2225 -3.893717,-3.973274 -6.433717,-5.322673 -2.54,-1.349399 -5.475634,-2.06189 -8.650634,-2.06189 -0.0968,0 -0.193289,-0.0011 -0.289388,0 z m 41.88375,6.640423 c -0.7937,2.222399 -2.14643,3.806899 -4.05143,4.759399 -1.905005,0.9525 -4.285972,1.431435 -7.064173,1.431438 h -4.681884 v 5.792927 c 1.349401,0 2.463313,0.473769 3.415813,1.426269 0.9525,0.9525 2.143538,2.385642 3.731038,4.449341 l 14.045656,18.65002 h 10.00456 L 61.431138,32.726891 c 2.8575,-0.7938 5.47351,-2.06375 7.85481,-3.96875 2.3813,-1.905 3.97077,-4.36459 4.76457,-7.53959 z m -41.744225,0.501261 c 0.0495,-5.3e-4 0.100264,0 0.149863,0 1.508101,0 2.858947,0.321013 4.128947,0.956013 1.27,0.635 2.299732,1.429785 3.172934,2.382285 0.872998,0.9525 1.590857,2.140643 2.067057,3.410643 0.4763,1.349401 0.792046,2.700147 0.950846,4.128947 H 12.61241 c 0,-1.508101 0.317731,-2.939743 0.873331,-4.289144 0.5556,-1.27 1.269686,-2.458143 2.222087,-3.410643 0.952601,-0.9525 2.063129,-1.749071 3.333129,-2.30477 1.230302,-0.5382 2.683798,-0.854131 4.216796,-0.873331 z" />
+                      <path d="m51.5923,2.165 H 86.4377 L 84.0554,8.914 H 49.21 l 2.3823,-6.749" />
+                      <path d="m 51.5923,14.47 h 34.8454 l -2.3823,6.749 H 49.21 l 2.3823,-6.749" />
+                    </svg>
+                  </div>
+                  <span style="color: #555555; font-size: 11px; font-weight: 50 !important;">+29 others</span>
+                </div>
+              </div>
+            </div>
+            <div class="bill-fee-explanations" id="bill-fee-explanations">
+              <div class="fee-explanation-item" id="packing-charge-explanation" style="display: none;">
+                <b>*Packing Charge:</b> Applied to takeaway orders. This ensures your food is securely packed to maintain freshness, quality, and prevent tampering.
+              </div>
+              <div class="fee-explanation-item" id="handling-fee-explanation" style="display: none;">
+                <b>*Handling Fee:</b> Applied to orders below our minimum value of ₹200. This helps cover the additional resources used for preparing smaller, individual batches.
+              </div>
+              <div class="fee-explanation-item" id="eco-saver-explanation" style="display: none;">
+                <b>*Eco-Saver Charge:</b> A standard fee for our commitment to using high-quality, biodegradable packaging and serving products to help keep the environment clean.
+              </div>
+              <div class="fee-explanation-item" id="convenience-fee-explanation" style="display: none;">
+                <b>*Convenience Fee:</b> A small fee for UPI transactions that helps us maintain a secure and fast online payment system for your convenience.
+              </div>
+            </div>
+            <div class="print-footer">
+              <div class="cat-icon">ฅ^>⩊<^ ฅ๛ᡣ𐭩</div>
+                  <div>╔═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╗</div>
+                  <div>ধন্যবাদ! ● धन्यवाद! ● Thank you!</div>
+                  <div style="color: var(--primary) !important; ">｡ﾟ•┈୨♡୧┈• ｡ﾟ｡ﾟ•┈୨♡୧┈• ｡ﾟ</div>
+                  <div>দয়া করে আবার আসবেন!</div>
+                  <div>कृपया फिर आइएगा!</div>
+                  <div>Please come again!</div>
+                  <div>╚═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╝</div>
+              </div>
+            </div>
+          </div>
+          <div class="bill-actions" id="bill-modal-actions">
+            <button class="btn btn-whatsapp" id="send-whatsapp"> <i class="fab fa-whatsapp"></i> Send via WhatsApp </button>
+            <button class="btn btn-primary" id="close-bill"> <i class="fas fa-times"></i> Close </button>
+          </div>
+        </div>
+      </div>
+      <input type="file" id="json-import-input" accept=".json" style="display: none;">
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          // --- DATA DEFINITIONS ---
+          const addOnsData = {
+              extraCheese: { name: 'Extra Cheese', price: 40, calories: 80, portionSize: '1 slice' },
+              butter: { name: 'Butter', price: 20, calories: 100, portionSize: '10g' },
+              extraPaneer: { name: 'Extra Paneer', price: 60, calories: 150, portionSize: '4-5 pcs' },
+              extraChicken: { name: 'Extra Chicken', price: 80, calories: 180, portionSize: '4-5 pcs' },
+              extraShrimp: { name: 'Extra Shrimp', price: 100, calories: 120, portionSize: '3-4 pcs' },
+              extraVeggies: { name: 'Extra Veggies', price: 40, calories: 30, portionSize: 'approx. 50g' },
+              extraBoiledEgg: { name: 'Extra Boiled Egg', price: 25, calories: 78, portionSize: '1 pc' },
+              extraScrambledEgg: { name: 'Extra Scrambled Egg', price: 35, calories: 100, portionSize: '1 egg' },
+              extraFriedEgg: { name: 'Extra Fried Egg', price: 30, calories: 90, portionSize: '1 pc' }
+          };
+
+          const menuData = [
+  // Soups
+  { id: 'hotsoursoupveg', name: 'Hot & Sour Soup (Veg)', price: 185, category: 'Soups', type: 'veg', spicy: true, img: 'images/Soups/Hot & Sour Soup (Veg).jpg', description: 'Classic spicy and sour soup with vegetables.', baseCalories: 150, availableAddons: ['extraVeggies'] },
+  { id: 'hotsoursoupchicken', name: 'Hot & Sour Soup (Chicken)', price: 205, category: 'Soups', type: 'non-veg', spicy: true, img: 'images/Soups/Hot & Sour Soup (Chicken).jpg', description: 'Classic spicy and sour soup with chicken.', baseCalories: 180, availableAddons: ['extraChicken'] },
+  { id: 'hotsoursoupprawn', name: 'Hot & Sour Soup (Prawn)', price: 225, category: 'Soups', type: 'seafood', spicy: true, img: 'images/Soups/Hot & Sour Soup (Prawn).jpg', description: 'Classic spicy and sour soup with prawns.', baseCalories: 170, availableAddons: ['extraShrimp'] },
+  { id: 'sweetcornsoupveg', name: 'Sweet Corn Soup (Veg)', price: 185, category: 'Soups', type: 'veg', spicy: false, img: 'images/Soups/Sweet Corn Soup (Veg).jpg', description: 'Creamy and comforting sweet corn soup.', baseCalories: 160, availableAddons: ['extraVeggies'] },
+  { id: 'sweetcornsoupchicken', name: 'Sweet Corn Soup (Chicken)', price: 205, category: 'Soups', type: 'non-veg', spicy: false, img: 'images/Soups/Sweet Corn Soup (Chicken).jpg', description: 'Creamy sweet corn soup with chicken.', baseCalories: 190, availableAddons: ['extraChicken'] },
+  { id: 'lungfungsoupchicken', name: 'Lung Fung Soup (Chicken)', price: 215, category: 'Soups', type: 'egg', spicy: false, img: 'images/Soups/Lung Fung Soup (Chicken).jpg', description: 'Thick, creamy soup with chicken and egg.', baseCalories: 200, availableAddons: ['extraChicken', 'extraFriedEgg'] },
+  { id: 'manchowsoupveg', name: 'Manchow Soup (Veg)', price: 185, category: 'Soups', type: 'veg', spicy: true, img: 'images/Soups/Manchow Soup (Veg).jpg', description: 'Spicy soup with vegetables, topped with crispy noodles.', baseCalories: 170, availableAddons: ['extraVeggies'] },
+  { id: 'manchowsoupchicken', name: 'Manchow Soup (Chicken)', price: 205, category: 'Soups', type: 'non-veg', spicy: true, img: 'images/Soups/Manchow Soup (Chicken).jpg', description: 'Spicy soup with chicken, topped with crispy noodles.', baseCalories: 200, availableAddons: ['extraChicken'] },
+  { id: 'manchowsoupprawn', name: 'Manchow Soup (Prawn)', price: 225, category: 'Soups', type: 'seafood', spicy: true, img: 'images/Soups/Manchow Soup (Prawn).jpg', description: 'Spicy soup with prawns, topped with crispy noodles.', baseCalories: 190, availableAddons: ['extraShrimp'] },
+  { id: 'lemoncoriandersoupveg', name: 'Lemon Coriander Soup (Veg)', price: 185, category: 'Soups', type: 'veg', spicy: false, img: 'images/Soups/Lemon Coriander Soup (Veg).jpg', description: 'Clear soup with a refreshing lemon and coriander flavor.', baseCalories: 140, availableAddons: ['extraVeggies'] },
+  { id: 'lemoncoriandersoupchicken', name: 'Lemon Coriander Soup (Chicken)', price: 205, category: 'Soups', type: 'non-veg', spicy: false, img: 'images/Soups/Lemon Coriander Soup (Chicken).jpg', description: 'Clear chicken soup with a refreshing lemon and coriander flavor.', baseCalories: 170, availableAddons: ['extraChicken'] },
+  { id: 'lemoncoriandersoupprawn', name: 'Lemon Coriander Soup (Prawn)', price: 225, category: 'Soups', type: 'seafood', spicy: false, img: 'images/Soups/Lemon Coriander Soup (Prawn).jpg', description: 'Clear prawn soup with a refreshing lemon and coriander flavor.', baseCalories: 160, availableAddons: ['extraShrimp'] },
+  { id: 'tomyumsoupveg', name: 'Tom Yum Soup (Veg)', price: 185, category: 'Soups', type: 'veg', spicy: true, img: 'images/Soups/Tom Yum Soup (Veg).jpg', description: 'Thai hot and sour soup with vegetables.', baseCalories: 150, availableAddons: ['extraVeggies'] },
+  { id: 'tomyumsoupchicken', name: 'Tom Yum Soup (Chicken)', price: 205, category: 'Soups', type: 'non-veg', spicy: true, img: 'images/Soups/Tom Yum Soup (Chicken).jpg', description: 'Thai hot and sour soup with chicken.', baseCalories: 180, availableAddons: ['extraChicken'] },
+  { id: 'tomyumsoupprawn', name: 'Tom Yum Soup (Prawn)', price: 225, category: 'Soups', type: 'seafood', spicy: true, img: 'images/Soups/Tom Yum Soup (Prawn).jpg', description: 'Thai hot and sour soup with prawns.', baseCalories: 170, availableAddons: ['extraShrimp'] },
+  { id: 'tomkhasoupveg', name: 'Tom Kha Soup (Veg)', price: 205, category: 'Soups', type: 'veg', spicy: false, img: 'images/Soups/Tom Kha Soup (Veg).jpg', description: 'Creamy Thai coconut soup with vegetables.', baseCalories: 220, availableAddons: ['extraVeggies'] },
+  { id: 'tomkhasoupchicken', name: 'Tom Kha Soup (Chicken)', price: 245, category: 'Soups', type: 'non-veg', spicy: false, img: 'images/Soups/Tom Kha Soup (Chicken).jpg', description: 'Creamy Thai coconut soup with chicken.', baseCalories: 260, availableAddons: ['extraChicken'] },
+  { id: 'tomkhasoupprawn', name: 'Tom Kha Soup (Prawn)', price: 275, category: 'Soups', type: 'seafood', spicy: false, img: 'images/Soups/Tom Kha Soup (Prawn).jpg', description: 'Creamy Thai coconut soup with prawns.', baseCalories: 250, availableAddons: ['extraShrimp'] },
+  { id: 'laksagaisoupchicken', name: 'Laksa Gai Soup (Chicken)', price: 225, category: 'Soups', type: 'non-veg', spicy: true, img: 'images/Soups/Laksa Gai Soup (Chicken).jpg', description: 'Spicy Malaysian coconut-based noodle soup with chicken.', baseCalories: 280, availableAddons: ['extraChicken', 'extraBoiledEgg'] },
+  // Salad
+  { id: 'crispynoodlessaladveg', name: 'Crispy Noodles Salad (Veg)', price: 150, category: 'Salad', type: 'veg', spicy: false, img: 'images/Salad/Crispy Noodles Salad (Veg).jpg', description: 'A crunchy and refreshing salad.', baseCalories: 250, availableAddons: ['extraVeggies'] },
+  { id: 'crispynoodlessaladchicken', name: 'Crispy Noodles Salad (Chicken)', price: 180, category: 'Salad', type: 'non-veg', spicy: false, img: 'images/Salad/Crispy Noodles Salad (Chicken).jpg', description: 'A crunchy and refreshing salad with chicken.', baseCalories: 320, availableAddons: ['extraChicken'] },
+  { id: 'kimchisaladveg', name: 'Kimchi Salad (Veg)', price: 150, category: 'Salad', type: 'veg', spicy: true, img: 'images/Salad/Kimchi Salad (Veg).jpg', description: 'Spicy fermented Korean cabbage salad.', baseCalories: 80, availableAddons: [] },
+  { id: 'somtamsaladveg', name: 'Som Tam Salad (Veg)', price: 150, category: 'Salad', type: 'veg', spicy: true, img: 'images/Salad/Som Tam Salad (Veg).jpg', description: 'Spicy green papaya salad from Thailand.', baseCalories: 120, availableAddons: [] },
+  // Appetizers
+  { id: 'crispychillibabycorn', name: 'Crispy Chilli Babycorn', price: 250, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Crispy Chilli Babycorn.jpg', description: 'Fried babycorn tossed in a spicy sauce.', baseCalories: 320, availableAddons: [] },
+  { id: 'chillicheesestuffmushroom', name: 'Chilli Cheese Stuff Mushroom', price: 250, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Chilli Cheese Stuff Mushroom.jpg', description: 'Mushrooms stuffed with cheese and spices.', baseCalories: 340, availableAddons: ['extraCheese'] },
+  { id: 'cheesyspringroll', name: 'Cheesy Spring Roll', price: 230, category: 'Appetizers', type: 'veg', spicy: false, img: 'images/Appetizer Veg/Cheesy Spring Roll.jpg', description: 'Crispy spring rolls with a cheesy vegetable filling.', baseCalories: 300, availableAddons: ['extraCheese'] },
+  { id: 'crispychilliamericancorn', name: 'Crispy Chilli American Corn', price: 250, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Crispy Chilli American Corn.jpg', description: 'Crispy fried corn kernels tossed in spicy sauce.', baseCalories: 330, availableAddons: [] },
+  { id: 'chillipaneerdry10pcs', name: 'Chilli Paneer Dry (10 Pcs)', price: 260, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Chilli Paneer Dry (10 Pcs).jpg', description: 'Stir-fried paneer with bell peppers and onions.', baseCalories: 380, availableAddons: ['extraPaneer'] },
+  { id: 'chillibasilpaneerdry10pcs', name: 'Chilli Basil Paneer Dry (10 Pcs)', price: 260, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Chilli Basil Paneer Dry (10 Pcs).jpg', description: 'Paneer tossed in a spicy basil sauce.', baseCalories: 390, availableAddons: ['extraPaneer'] },
+  { id: 'kungpaopaneerdry10pcs', name: 'Kung Pao Paneer Dry (10 Pcs)', price: 265, category: 'Appetizers', type: 'veg', spicy: false, img: 'images/Appetizer Veg/Kung Pao Paneer Dry (10 Pcs).jpg', description: 'A sweet and savory dish with paneer and peanuts.', baseCalories: 400, availableAddons: ['extraPaneer'] },
+  { id: 'lutmemushroom', name: 'Lut Me Mushroom', price: 230, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Lut Me Mushroom.jpg', description: 'A spicy mushroom appetizer.', baseCalories: 310, availableAddons: [] },
+  { id: 'mushroombeijingstyle', name: 'Mushroom Beijing Style', price: 265, category: 'Appetizers', type: 'veg', spicy: false, img: 'images/Appetizer Veg/Mushroom Beijing Style.jpg', description: 'Mushrooms cooked in a savory Beijing-style sauce.', baseCalories: 350, availableAddons: [] },
+  { id: 'drumsofheavenhongkongstyle8pcs', name: 'Drums of Heaven Hong Kong Style (8 Pcs)', price: 315, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Drums of Heaven Hong Kong Style (8 Pcs).jpg', description: 'Spicy and saucy chicken lollipops.', baseCalories: 550, availableAddons: [] },
+  { id: 'chickenlollipop8pcs', name: 'Chicken Lollipop (8 Pcs)', price: 305, category: 'Appetizers', type: 'non-veg', spicy: false, img: 'images/Appetizer Chicken/Chicken Lollipop (8 Pcs).jpg', description: 'Classic frenched chicken winglets.', baseCalories: 530, availableAddons: [] },
+  { id: 'panfriedchillichickendry10pcs', name: 'Pan Fried Chilli Chicken Dry (10 Pcs)', price: 325, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Pan Fried Chilli Chicken Dry (10 Pcs).jpg', description: 'Stir-fried chicken with bell peppers and onions.', baseCalories: 480, availableAddons: ['extraChicken'] },
+  { id: 'takraichicken10pcs', name: 'Takrai Chicken (10 Pcs)', price: 315, category: 'Appetizers', type: 'non-veg', spicy: false, img: 'images/Appetizer Chicken/Takrai Chicken (10 Pcs).jpg', description: 'Lemongrass flavored chicken appetizer.', baseCalories: 460, availableAddons: ['extraChicken'] },
+  { id: 'chilligarlicpepperchicken', name: 'Chilli Garlic Pepper Chicken', price: 315, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Chilli Garlic Pepper Chicken.jpg', description: 'Chicken tossed in a spicy garlic and pepper sauce.', baseCalories: 470, availableAddons: ['extraChicken'] },
+  { id: 'indobongochinesechicken10pcs', name: 'Indo Bongo Chinese Chicken (10 Pcs)', price: 315, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Indo Bongo Chinese Chicken (10 Pcs).jpg', description: 'A unique fusion chicken appetizer.', baseCalories: 490, availableAddons: ['extraChicken'] },
+  { id: 'crispyhoneychicken', name: 'Crispy Honey Chicken', price: 290, category: 'Appetizers', type: 'non-veg', spicy: false, img: 'images/Appetizer Chicken/Crispy Honey Chicken.jpg', description: 'Crispy fried chicken in a sweet honey sauce.', baseCalories: 520, availableAddons: ['extraChicken'] },
+  { id: 'wingsshandongstyle8pcs', name: 'Wings Shandong Style (8 Pcs)', price: 305, category: 'Appetizers', type: 'non-veg', spicy: false, img: 'images/Appetizer Chicken/Wings Shandong Style (8 Pcs).jpg', description: 'Chicken wings in a savory Shandong sauce.', baseCalories: 540, availableAddons: [] },
+  { id: 'assortedblackpepperdicedchicken10pcs', name: 'Assorted Black Pepper Diced Chicken (10 Pcs)', price: 305, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Assorted Black Pepper Diced Chicken (10 Pcs).jpg', description: 'Diced chicken in a peppery sauce.', baseCalories: 450, availableAddons: ['extraChicken'] },
+  { id: 'latmeikai', name: 'Lat Mei Kai', price: 330, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Lat Mei Kai.jpg', description: 'A spicy and flavorful chicken preparation.', baseCalories: 480, availableAddons: ['extraChicken'] },
+  { id: 'authentickolkatastylechillichicken10pcs', name: 'Authentic Kolkata Style Chilli Chicken (10 Pcs)', price: 345, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Authentic Kolkata Style Chilli Chicken (10 Pcs).jpg', description: 'The classic tangy and spicy chicken appetizer.', baseCalories: 500, availableAddons: ['extraChicken'] },
+  { id: 'thaichickenwithcashewnut20pcs', name: 'Thai Chicken with Cashew Nut (20 Pcs)', price: 330, category: 'Appetizers', type: 'non-veg', spicy: false, img: 'images/Appetizer Chicken/Thai Chicken with Cashew Nut (20 Pcs).jpg', description: 'Stir-fried chicken with cashew nuts in a Thai style.', baseCalories: 560, availableAddons: ['extraChicken'] },
+  { id: 'fishinbutterpeppergarlic10pcs', name: 'Fish in Butter Pepper Garlic (10 Pcs)', price: 345, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Fish in Butter Pepper Garlic (10 Pcs).jpg', description: 'Fish fillets in a rich butter pepper garlic sauce.', baseCalories: 450, availableAddons: ['butter'] },
+  { id: 'panfriedchillifish10pcs', name: 'Pan Fried Chilli Fish (10 Pcs)', price: 350, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Pan Fried Chilli Fish (10 Pcs).jpg', description: 'Pan-fried fish tossed in a spicy chilli sauce.', baseCalories: 480, availableAddons: [] },
+  { id: 'pankofriedfish10pcs', name: 'Panko Fried Fish (10 Pcs)', price: 340, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Panko Fried Fish (10 Pcs).jpg', description: 'Fish fillets coated in panko breadcrumbs and deep-fried.', baseCalories: 500, availableAddons: [] },
+  { id: 'fishinchineseparsleysauce10pcs', name: 'Fish in Chinese Parsley Sauce (10 Pcs)', price: 340, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Fish in Chinese Parsley Sauce (10 Pcs).jpg', description: 'Fish cooked in a fragrant parsley sauce.', baseCalories: 460, availableAddons: [] },
+  { id: 'fishinchillimustard10pcs', name: 'Fish in Chilli Mustard (10 Pcs)', price: 345, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Fish in Chilli Mustard (10 Pcs).jpg', description: 'A tangy and spicy fish preparation.', baseCalories: 470, availableAddons: [] },
+  { id: 'fishinchillibasil10pcs', name: 'Fish in Chilli Basil (10 Pcs)', price: 340, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Fish in Chilli Basil (10 Pcs).jpg', description: 'Fish tossed in a spicy basil sauce.', baseCalories: 460, availableAddons: [] },
+  { id: 'goldenfriedprawn8pcs', name: 'Golden Fried Prawn (8 Pcs)', price: 410, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Golden Fried Prawn (8 Pcs).jpg', description: 'Prawns deep-fried to a golden brown.', baseCalories: 520, availableAddons: [] },
+  { id: 'pancoprawn8pcs', name: 'Panco Prawn (8 Pcs)', price: 400, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Panco Prawn (8 Pcs).jpg', description: 'Prawns coated in panko breadcrumbs and fried.', baseCalories: 510, availableAddons: [] },
+  { id: 'prawninchillibasil8pcs', name: 'Prawn in Chilli Basil (8 Pcs)', price: 410, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Prawn in Chilli Basil (8 Pcs).jpg', description: 'Prawns tossed in a spicy basil sauce.', baseCalories: 490, availableAddons: ['extraShrimp'] },
+  { id: 'chilliprawndry8pcs', name: 'Chilli Prawn Dry (8 Pcs)', price: 410, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Chilli Prawn Dry (8 Pcs).jpg', description: 'Classic stir-fried chilli prawns.', baseCalories: 500, availableAddons: ['extraShrimp'] },
+  { id: 'takraiprawn8pcs', name: 'Takrai Prawn (8 Pcs)', price: 410, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Takrai Prawn (8 Pcs).jpg', description: 'Lemongrass flavored prawn appetizer.', baseCalories: 480, availableAddons: ['extraShrimp'] },
+  { id: 'spicyhunanprawn8pcs', name: 'Spicy Hunan Prawn (8 Pcs)', price: 400, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Spicy Hunan Prawn (8 Pcs).jpg', description: 'Prawns cooked in a fiery Hunan sauce.', baseCalories: 490, availableAddons: ['extraShrimp'] },
+  { id: 'wholebhetkiinchoiceofsaucehotgarlicsauceschezwansaucechillisauce', name: 'Whole Bhetki in Choice of Sauce', price: 750, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Whole Bhetki in Choice of Sauce.jpg', description: 'Choice of Hot Garlic, Schezwan, or Chilli Sauce.', baseCalories: 800, availableAddons: [] },
+  { id: 'softshellcrabinchoiceofsaucehotgarlicsauceschezwansaucechillisauce', name: 'Soft Shell Crab in Choice of Sauce', price: 495, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Soft Shell Crab in Choice of Sauce.jpg', description: 'Choice of Hot Garlic, Schezwan, or Chilli Sauce.', baseCalories: 600, availableAddons: [] },
+  // Momos
+  { id: 'chickenschezwanstylemomo8pcssteam', name: 'Chicken Schezwan Momo (Steam, 8 Pcs)', price: 235, category: 'Momos', type: 'non-veg', spicy: true, img: 'images/Momos/Chicken Schezwan Momo (Steam, 8 Pcs).jpg', description: 'Steamed momos with a spicy chicken filling.', baseCalories: 350, availableAddons: ['extraChicken'] },
+  { id: 'chickenSchezwanStyleMomo8PcsFried', name: 'Chicken Schezwan Momo (Fried, 8 Pcs)', price: 245, category: 'Momos', type: 'non-veg', spicy: true, img: 'images/Momos/Chicken Schezwan Momo (Fried, 8 Pcs).jpg', description: 'Fried momos with a spicy chicken filling.', baseCalories: 450, availableAddons: ['extraChicken'] },
+  { id: 'chickenSchezwanStyleMomo8PcsPanFried', name: 'Chicken Schezwan Momo (Pan-Fried, 8 Pcs)', price: 265, category: 'Momos', type: 'non-veg', spicy: true, img: 'images/Momos/Chicken Schezwan Momo (Pan-Fried, 8 Pcs).jpg', description: 'Pan-fried momos with a spicy chicken filling.', baseCalories: 480, availableAddons: ['extraChicken'] },
+  { id: 'chickenMushroomMomo8PcsSteam', name: 'Chicken & Mushroom Momo (Steam, 8 Pcs)', price: 235, category: 'Momos', type: 'non-veg', spicy: false, img: 'images/Momos/Chicken & Mushroom Momo (Steam, 8 Pcs).jpg', description: 'Steamed dumplings with chicken and mushroom.', baseCalories: 340, availableAddons: ['extraChicken'] },
+  { id: 'chickenMushroomMomo8PcsFried', name: 'Chicken & Mushroom Momo (Fried, 8 Pcs)', price: 245, category: 'Momos', type: 'non-veg', spicy: false, img: 'images/Momos/Chicken & Mushroom Momo (Fried, 8 Pcs).jpg', description: 'Fried dumplings with chicken and mushroom.', baseCalories: 440, availableAddons: ['extraChicken'] },
+  { id: 'chickenMushroomMomo8PcsPanFried', name: 'Chicken & Mushroom Momo (Pan-Fried, 8 Pcs)', price: 265, category: 'Momos', type: 'non-veg', spicy: false, img: 'images/Momos/Chicken & Mushroom Momo (Pan-Fried, 8 Pcs).jpg', description: 'Pan-fried dumplings with chicken and mushroom.', baseCalories: 470, availableAddons: ['extraChicken'] },
+  { id: 'chickenOysterBasilMomo8PcsSteam', name: 'Chicken Oyster Basil Momo (Steam, 8 Pcs)', price: 235, category: 'Momos', type: 'non-veg', spicy: false, img: 'images/Momos/Chicken Oyster Basil Momo (Steam, 8 Pcs).jpg', description: 'Steamed momos with a savory basil filling.', baseCalories: 360, availableAddons: ['extraChicken'] },
+  { id: 'prawnZucchiniHargao8PcsSteam', name: 'Prawn Zucchini Hargao (Steam, 8 Pcs)', price: 235, category: 'Momos', type: 'seafood', spicy: false, img: 'images/Momos/Prawn Zucchini Hargao (Steam, 8 Pcs).jpg', description: 'Delicate steamed prawn and zucchini dumplings.', baseCalories: 320, availableAddons: ['extraShrimp'] },
+  { id: 'vegDarjeelingMomo8PcsSteam', name: 'Veg Darjeeling Momo (Steam, 8 Pcs)', price: 205, category: 'Momos', type: 'veg', spicy: false, img: 'images/Momos/Veg Darjeeling Momo (Steam, 8 Pcs).jpg', description: 'Classic steamed vegetable momos.', baseCalories: 280, availableAddons: ['extraVeggies'] },
+  { id: 'cornCottageCheeseMomoVeg8PcsSteam', name: 'Corn & Cheese Momo (Steam, 8 Pcs)', price: 205, category: 'Momos', type: 'veg', spicy: false, img: 'images/Momos/Corn & Cheese Momo (Steam, 8 Pcs).jpg', description: 'Steamed momos with a corn and cottage cheese filling.', baseCalories: 300, availableAddons: ['extraPaneer', 'extraCheese'] },
+  // Baos
+  { id: 'chickenBarbequeBao3Pcs', name: 'Chicken Barbeque Bao (3 Pcs)', price: 245, category: 'Baos', type: 'non-veg', spicy: false, img: 'images/Baos/Chicken Barbeque Bao (3 Pcs).jpg', description: 'Soft steamed buns with a BBQ chicken filling.', baseCalories: 400, availableAddons: ['extraChicken'] },
+  { id: 'flamingBaoVeg3Pcs', name: 'Flaming Bao Veg (3 Pcs)', price: 225, category: 'Baos', type: 'veg', spicy: true, img: 'images/Baos/Flaming Bao Veg (3 Pcs).jpg', description: 'Soft steamed buns with a spicy vegetable filling.', baseCalories: 350, availableAddons: ['extraPaneer'] },
+  // Japanese Bowls
+  { id: 'japaneseRamenBowlVeg', name: 'Japanese Ramen Bowl (Veg)', price: 299, category: 'Japanese Bowls', type: 'veg', spicy: false, img: 'images/Japanese Bowls/Japanese Ramen Bowl (Veg).jpg', description: 'A hearty noodle soup bowl with vegetables.', baseCalories: 450, availableAddons: ['extraPaneer', 'extraVeggies', 'extraBoiledEgg'] },
+  { id: 'japaneseRamenBowlNonVeg', name: 'Japanese Ramen Bowl (Non-Veg)', price: 399, category: 'Japanese Bowls', type: 'non-veg', spicy: false, img: 'images/Japanese Bowls/Japanese Ramen Bowl (Non-Veg).jpg', description: 'A hearty noodle soup bowl with chicken.', baseCalories: 550, availableAddons: ['extraChicken', 'extraVeggies', 'extraBoiledEgg'] },
+  { id: 'japaneseDonburiBowlVeg', name: 'Japanese Donburi Bowl (Veg)', price: 299, category: 'Japanese Bowls', type: 'veg', spicy: false, img: 'images/Japanese Bowls/Japanese Donburi Bowl (Veg).jpg', description: 'A Japanese rice bowl with vegetables.', baseCalories: 480, availableAddons: ['extraPaneer', 'extraVeggies', 'extraFriedEgg'] },
+  { id: 'japaneseDonburiBowlNonVeg', name: 'Japanese Donburi Bowl (Non-Veg)', price: 399, category: 'Japanese Bowls', type: 'non-veg', spicy: false, img: 'images/Japanese Bowls/Japanese Donburi Bowl (Non-Veg).jpg', description: 'A Japanese rice bowl with chicken.', baseCalories: 580, availableAddons: ['extraChicken', 'extraVeggies', 'extraFriedEgg'] },
+  // Pan Asian Special
+  { id: 'dragonNoodlesMixed', name: 'Dragon Noodles (Mixed)', price: 300, category: 'Pan Asian Special', type: 'non-veg', spicy: true, img: 'images/Pan Asian Special/Dragon Noodles (Mixed).jpg', description: 'Spicy noodles with mixed meat and vegetables.', baseCalories: 500, availableAddons: ['extraChicken', 'extraShrimp', 'extraVeggies'] },
+  { id: 'stirFriedGarlicGreenBeansWithChicken', name: 'Stir Fried Garlic Green Beans with Chicken', price: 330, category: 'Pan Asian Special', type: 'non-veg', spicy: false, img: 'images/Pan Asian Special/Stir Fried Garlic Green Beans with Chicken.jpg', description: 'A savory stir-fry dish.', baseCalories: 420, availableAddons: ['extraChicken'] },
+  { id: 'crispyGingerSoyScallionFish', name: 'Crispy Ginger Soy Scallion Fish', price: 370, category: 'Pan Asian Special', type: 'seafood', spicy: false, img: 'images/Pan Asian Special/Crispy Ginger Soy Scallion Fish.jpg', description: 'Crispy fish with a ginger soy glaze.', baseCalories: 480, availableAddons: [] },
+  { id: 'thaiInfusedGranitePrawn4Pcs', name: 'Thai Infused Granite Prawn (4 Pcs)', price: 420, category: 'Pan Asian Special', type: 'seafood', spicy: false, img: 'images/Pan Asian Special/Thai Infused Granite Prawn (4 Pcs).jpg', description: 'Prawns prepared in a special Thai style.', baseCalories: 460, availableAddons: ['extraShrimp'] },
+  { id: 'leeFuNoodlesChicken', name: 'Lee Fu Noodles (Chicken)', price: 295, category: 'Pan Asian Special', type: 'non-veg', spicy: false, img: 'images/Pan Asian Special/Lee Fu Noodles (Chicken).jpg', description: 'A special noodle preparation with chicken.', baseCalories: 490, availableAddons: ['extraChicken', 'extraVeggies'] },
+  { id: 'chickenInHotBasil', name: 'Chicken in Hot Basil', price: 335, category: 'Pan Asian Special', type: 'non-veg', spicy: true, img: 'images/Pan Asian Special/Chicken in Hot Basil.jpg', description: 'Spicy stir-fried chicken with basil.', baseCalories: 430, availableAddons: ['extraChicken'] },
+  { id: 'indonesianPrawnWithMayoDip6Pcs', name: 'Indonesian Prawn with Mayo Dip (6 Pcs)', price: 420, category: 'Pan Asian Special', type: 'seafood', spicy: false, img: 'images/Pan Asian Special/Indonesian Prawn with Mayo Dip (6 Pcs).jpg', description: 'Fried prawns with a creamy mayo dip.', baseCalories: 520, availableAddons: ['extraShrimp'] },
+  { id: 'dynamitePrawn8Pcs', name: 'Dynamite Prawn (8 Pcs)', price: 460, category: 'Pan Asian Special', type: 'seafood', spicy: true, img: 'images/Pan Asian Special/Dynamite Prawn (8 Pcs).jpg', description: 'Crispy prawns in a spicy dynamite sauce.', baseCalories: 550, availableAddons: ['extraShrimp'] },
+  { id: 'moonFanFriedRiceVeg', name: 'Moon Fan Fried Rice Veg', price: 220, category: 'Pan Asian Special', type: 'veg', spicy: false, img: 'images/Pan Asian Special/Moon Fan Fried Rice Veg.jpg', description: 'A special type of vegetable fried rice.', baseCalories: 380, availableAddons: ['extraPaneer', 'extraVeggies'] },
+  { id: 'nasiGorengRiceChicken', name: 'Nasi Goreng Rice Chicken', price: 300, category: 'Pan Asian Special', type: 'non-veg', spicy: true, img: 'images/Pan Asian Special/Nasi Goreng Rice Chicken.jpg', description: 'Indonesian fried rice with chicken.', baseCalories: 510, availableAddons: ['extraChicken', 'extraFriedEgg'] },
+  // Thai Curry Special
+  { id: 'khowsueyveg', name: 'Khow Suey (Veg)', price: 450, category: 'Thai Curry Special', type: 'veg', spicy: false, img: 'images/Thai Curry Special/Khow Suey (Veg).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 600, availableAddons: ['extraPaneer', 'extraVeggies'] },
+  { id: 'khowsueychicken', name: 'Khow Suey (Chicken)', price: 525, category: 'Thai Curry Special', type: 'non-veg', spicy: false, img: 'images/Thai Curry Special/Khow Suey (Chicken).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 700, availableAddons: ['extraChicken', 'extraBoiledEgg'] },
+  { id: 'khowsueyprawn', name: 'Khow Suey (Prawn)', price: 575, category: 'Thai Curry Special', type: 'seafood', spicy: false, img: 'images/Thai Curry Special/Khow Suey (Prawn).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 680, availableAddons: ['extraShrimp', 'extraBoiledEgg'] },
+  { id: 'greencurrywithsteamriceveg', name: 'Green Curry with Steam Rice (Veg)', price: 340, category: 'Thai Curry Special', type: 'veg', spicy: true, img: 'images/Thai Curry Special/Green Curry with Steam Rice (Veg).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 550, availableAddons: ['extraPaneer', 'extraVeggies'] },
+  { id: 'greencurrywithsteamricechicken', name: 'Green Curry with Steam Rice (Chicken)', price: 410, category: 'Thai Curry Special', type: 'non-veg', spicy: true, img: 'images/Thai Curry Special/Green Curry with Steam Rice (Chicken).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 650, availableAddons: ['extraChicken'] },
+  { id: 'greencurrywithsteamriceprawn', name: 'Green Curry with Steam Rice (Prawn)', price: 475, category: 'Thai Curry Special', type: 'seafood', spicy: true, img: 'images/Thai Curry Special/Green Curry with Steam Rice (Prawn).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 630, availableAddons: ['extraShrimp'] },
+  { id: 'redcurrywithsteamriceveg', name: 'Red Curry with Steam Rice (Veg)', price: 340, category: 'Thai Curry Special', type: 'veg', spicy: true, img: 'images/Thai Curry Special/Red Curry with Steam Rice (Veg).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 550, availableAddons: ['extraPaneer', 'extraVeggies'] },
+  { id: 'redcurrywithsteamricechicken', name: 'Red Curry with Steam Rice (Chicken)', price: 410, category: 'Thai Curry Special', type: 'non-veg', spicy: true, img: 'images/Thai Curry Special/Red Curry with Steam Rice (Chicken).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 650, availableAddons: ['extraChicken'] },
+  { id: 'redcurrywithsteamriceprawn', name: 'Red Curry with Steam Rice (Prawn)', price: 475, category: 'Thai Curry Special', type: 'seafood', spicy: true, img: 'images/Thai Curry Special/Red Curry with Steam Rice (Prawn).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 630, availableAddons: ['extraShrimp'] },
+  // Main Course
+  { id: 'chillipaneergravy10pcs', name: 'Chilli Paneer Gravy (10 Pcs)', price: 275, category: 'Main Course', type: 'veg', spicy: true, img: 'images/Main Course Veg/Chilli Paneer Gravy (10 Pcs).jpg', description: 'Paneer in a spicy gravy.', baseCalories: 420, availableAddons: ['extraPaneer'] },
+  { id: 'vegmanchuriangravy8pcs', name: 'Veg Manchurian Gravy (8 Pcs)', price: 280, category: 'Main Course', type: 'veg', spicy: false, img: 'images/Main Course Veg/Veg Manchurian Gravy (8 Pcs).jpg', description: 'Vegetable balls in a savory sauce.', baseCalories: 400, availableAddons: ['extraVeggies'] },
+  { id: 'exoticmixedveginbuttergarlicsauce', name: 'Exotic Mixed Veg in Butter Garlic Sauce', price: 300, category: 'Main Course', type: 'veg', spicy: false, img: 'images/Main Course Veg/Exotic Mixed Veg in Butter Garlic Sauce.jpg', description: 'Assorted vegetables in a creamy butter garlic sauce.', baseCalories: 380, availableAddons: ['butter', 'extraVeggies'] },
+  { id: 'manchurianchicken10pcs', name: 'Manchurian Chicken (10 Pcs)', price: 350, category: 'Main Course', type: 'non-veg', spicy: false, img: 'images/Main Course Chicken/Manchurian Chicken (10 Pcs).jpg', description: 'Chicken in a savory Manchurian sauce.', baseCalories: 520, availableAddons: ['extraChicken'] },
+  { id: 'garlicchicken10pcs', name: 'Garlic Chicken (10 Pcs)', price: 350, category: 'Main Course', type: 'non-veg', spicy: false, img: 'images/Main Course Chicken/Garlic Chicken (10 Pcs).jpg', description: 'Chicken in a rich garlic-infused gravy.', baseCalories: 510, availableAddons: ['extraChicken'] },
+  { id: 'chillichickengravy10pcs', name: 'Chilli Chicken Gravy (10 Pcs)', price: 360, category: 'Main Course', type: 'non-veg', spicy: true, img: 'images/Main Course Chicken/Chilli Chicken Gravy (10 Pcs).jpg', description: 'The classic spicy chicken gravy.', baseCalories: 530, availableAddons: ['extraChicken'] },
+  { id: 'manchurianfish10pcs', name: 'Manchurian Fish (10 Pcs)', price: 370, category: 'Main Course', type: 'seafood', spicy: false, img: 'images/Main Course Seafood/Manchurian Fish (10 Pcs).jpg', description: 'Fish in a savory Manchurian sauce.', baseCalories: 490, availableAddons: [] },
+  { id: 'chilliprawngravy8pcs', name: 'Chilli Prawn Gravy (8 Pcs)', price: 420, category: 'Main Course', type: 'seafood', spicy: true, img: 'images/Main Course Seafood/Chilli Prawn Gravy (8 Pcs).jpg', description: 'Juicy prawns in a spicy chilli gravy.', baseCalories: 520, availableAddons: ['extraShrimp'] },
+  // Noodles
+  { id: 'hakkanoodlesveg', name: 'Hakka Noodles (Veg)', price: 220, category: 'Noodles', type: 'veg', spicy: false, img: 'images/Noodles/Hakka Noodles (Veg).jpg', description: 'Classic stir-fried noodles with vegetables.', baseCalories: 400, availableAddons: ['extraPaneer', 'extraVeggies', 'extraScrambledEgg'] },
+  { id: 'hakkanoodlesegg', name: 'Hakka Noodles (Egg)', price: 240, category: 'Noodles', type: 'egg', spicy: false, img: 'images/Noodles/Hakka Noodles (Egg).jpg', description: 'Classic stir-fried noodles with egg.', baseCalories: 430, availableAddons: ['extraChicken', 'extraVeggies', 'extraScrambledEgg'] },
+  { id: 'hakkanoodleschicken', name: 'Hakka Noodles (Chicken)', price: 255, category: 'Noodles', type: 'non-veg', spicy: false, img: 'images/Noodles/Hakka Noodles (Chicken).jpg', description: 'Classic stir-fried noodles with chicken.', baseCalories: 460, availableAddons: ['extraChicken', 'extraVeggies', 'extraScrambledEgg'] },
+  { id: 'hakkanoodlesmixed', name: 'Hakka Noodles (Mixed)', price: 290, category: 'Noodles', type: 'non-veg', spicy: false, img: 'images/Noodles/Hakka Noodles (Mixed).jpg', description: 'Classic stir-fried noodles with mixed meats.', baseCalories: 500, availableAddons: ['extraChicken', 'extraShrimp', 'extraVeggies'] },
+  { id: 'chilligarlicnoodlesveg', name: 'Chilli Garlic Noodles (Veg)', price: 225, category: 'Noodles', type: 'veg', spicy: true, img: 'images/Noodles/Chilli Garlic Noodles (Veg).jpg', description: 'Noodles tossed in a spicy chilli garlic sauce.', baseCalories: 410, availableAddons: ['extraPaneer', 'extraVeggies'] },
+  { id: 'chilligarlicnoodleschicken', name: 'Chilli Garlic Noodles (Chicken)', price: 250, category: 'Noodles', type: 'non-veg', spicy: true, img: 'images/Noodles/Chilli Garlic Noodles (Chicken).jpg', description: 'Noodles tossed in a spicy chilli garlic sauce with chicken.', baseCalories: 470, availableAddons: ['extraChicken', 'extraVeggies'] },
+  // Rice
+  { id: 'schezwanfriedriceveg', name: 'Schezwan Fried Rice (Veg)', price: 240, category: 'Rice', type: 'veg', spicy: true, img: 'images/Rice/Schezwan Fried Rice (Veg).jpg', description: 'Spicy fried rice tossed in Schezwan sauce.', baseCalories: 430, availableAddons: ['extraPaneer', 'extraVeggies'] },
+  { id: 'schezwanfriedriceegg', name: 'Schezwan Fried Rice (Egg)', price: 260, category: 'Rice', type: 'egg', spicy: true, img: 'images/Rice/Schezwan Fried Rice (Egg).jpg', description: 'Spicy fried rice tossed in Schezwan sauce with egg.', baseCalories: 460, availableAddons: ['extraChicken', 'extraVeggies', 'extraScrambledEgg'] },
+  { id: 'schezwanfriedricemixed', name: 'Schezwan Fried Rice (Mixed)', price: 285, category: 'Rice', type: 'non-veg', spicy: true, img: 'images/Rice/Schezwan Fried Rice (Mixed).jpg', description: 'Spicy fried rice with mixed meats.', baseCalories: 530, availableAddons: ['extraChicken', 'extraShrimp', 'extraVeggies'] },
+  // Dessert
+  { id: 'darsaan', name: 'Darsaan', price: 180, category: 'Dessert', type: 'veg', spicy: false, img: 'images/Dessert/Darsaan.jpg', description: 'Crispy fried flat noodles tossed in honey.', baseCalories: 400, availableAddons: [] },
+  { id: 'darsaanwithicecream', name: 'Darsaan with Ice Cream', price: 225, category: 'Dessert', type: 'veg', spicy: false, img: 'images/Dessert/Darsaan with Ice Cream.jpg', description: 'Crispy honey noodles served with a scoop of ice cream.', baseCalories: 550, availableAddons: [] },
+  { id: 'browniewithicecream', name: 'Brownie with Ice Cream', price: 225, category: 'Dessert', type: 'veg', spicy: false, img: 'images/Dessert/Brownie with Ice Cream.jpg', description: 'Warm chocolate brownie with a scoop of ice cream.', baseCalories: 600, availableAddons: [] },
+  { id: 'blueberrycheesecake', name: 'Blueberry Cheese Cake', price: 180, category: 'Dessert', type: 'veg', spicy: false, img: 'images/Dessert/Blueberry Cheese Cake.jpg', description: 'Creamy cheesecake topped with blueberry compote.', baseCalories: 420, availableAddons: [] },
+  // Beverages
+  { id: 'freshlimesoda', name: 'Fresh Lime Soda', price: 80, category: 'Beverages', type: 'veg', spicy: false, img: 'images/Beverages/Fresh Lime Soda.jpg', description: 'A refreshing sweet and salty drink.', baseCalories: 90, availableAddons: [] },
+  { id: 'masalachai', name: 'Masala Chai', price: 50, category: 'Beverages', type: 'veg', spicy: false, img: 'images/Beverages/Masala Chai.jpg', description: 'Indian spiced tea with milk.', baseCalories: 120, availableAddons: [] },
+  { id: 'lassisweetsalted', name: 'Lassi (Sweet/Salted)', price: 90, category: 'Beverages', type: 'veg', spicy: false, img: 'images/Beverages/Lassi (Sweet_Salted).jpg', description: 'A creamy yogurt-based drink.', baseCalories: 180, availableAddons: [] },
+  // Special Dips
+  { id: 'dipscombo3sauce', name: 'Dips Combo (3 Sauce)', price: 100, category: 'Special Dips', type: 'veg', spicy: true, img: 'images/Special Dips/Dips Combo (3 Sauce).jpg', description: 'A combination of our three special sauces.', baseCalories: 300, availableAddons: [] }
+];
+
+          // --- CONFIGURABLE CONSTANTS ---
+          const PACKING_CHARGE = 20;
+          const AVG_ADULT_DAILY_CALORIES = 2000;
+          const MINIMUM_ORDER_AMOUNT = 200;
+          const HANDLING_FEE = 30;
+          const CONVENIENCE_FEE_PERCENT = 0.02;
+          const ECO_SAVER_CHARGE = 5;
+          // --- GLOBAL VARIABLES ---
+          let orders = JSON.parse(localStorage.getItem('spiceGardenOrders')) || [];
+          let isViewMode = false;
+          let currentOrder = [];
+          // --- DOM ELEMENT REFERENCES ---
+          const menuGrid = document.getElementById('menu-grid');
+          const categoryNav = document.querySelector('.category-nav');
+          const orderItemsElement = document.getElementById('order-items');
+          const addonModal = document.getElementById('addon-modal');
+          const addonList = document.getElementById('addon-list');
+          const recentOrdersList = document.getElementById('recent-orders-list');
+          const totalItemsCount = document.getElementById('total-items-count');
+          // --- DYNAMIC CONTENT RENDERING ---
+          function renderMenu() {
+            menuGrid.innerHTML = '';
+            const categories = {};
+            const categoryOrder = ["Soups", "Salad", "Appetizers", "Momos", "Baos", "Japanese Bowls", "Pan Asian Special", "Thai Curry Special", "Main Course", "Rice", "Noodles", "Dessert", "Special Dips", "Beverages"];
+
+            categoryOrder.forEach(catName => {
+                const items = menuData.filter(item => item.category === catName);
+                if (items.length > 0) {
+                    categories[catName] = items;
+                }
+            });
+
+            for (const categoryName of categoryOrder) {
+                if (!categories[categoryName]) continue;
+
+                const categoryId = categoryName.toLowerCase().replace(/[^a-zA-Z0-9]/g, '-');
+                const categoryTitle = document.createElement('div');
+                categoryTitle.className = 'category-title';
+                categoryTitle.dataset.category = categoryId;
+
+                const hasVeg = categories[categoryName].some(i => i.type === 'veg');
+                const hasNonVeg = categories[categoryName].some(i => ['non-veg', 'seafood', 'egg'].includes(i.type));
+                const hasEgg = categories[categoryName].some(i => i.type === 'egg');
+                const hasSeafood = categories[categoryName].some(i => i.type === 'seafood');
+                const hasSpicy = categories[categoryName].some(i => i.spicy);
+
+                let filtersHTML = `
+                    <button class="sub-filter-btn active" data-filter="all" title="Show All"><i class="fas fa-list"></i></button>
+                    ${hasVeg ? '<button class="sub-filter-btn" data-filter="veg" title="Veg"><span class="veg-icon"></span></button>' : ''}
+                    ${hasNonVeg ? '<button class="sub-filter-btn" data-filter="non-veg" title="Non-Veg"><span class="non-veg-icon"></span></button>' : ''}
+                    ${hasEgg ? '<button class="sub-filter-btn" data-filter="egg" title="Egg"><span class="egg-icon"></span></button>' : ''}
+                    ${hasSeafood ? '<button class="sub-filter-btn" data-filter="seafood" title="Seafood"><span class="seafood-icon"></span></button>' : ''}
+                    ${hasSpicy ? '<button class="sub-filter-btn" data-filter="spicy" title="Spicy"><i class="fas fa-pepper-hot spicy-icon"></i></button>' : ''}
+                `;
+
+                categoryTitle.innerHTML = `
+                    <span><i class="fas fa-utensils"></i> ${categoryName}</span>
+                    <div class="category-filters">${filtersHTML}</div>
+                `;
+                menuGrid.appendChild(categoryTitle);
+                
+                categories[categoryName].forEach(item => {
+                    const menuItemElement = document.createElement('div');
+                    menuItemElement.className = 'menu-item';
+                    menuItemElement.dataset.category = categoryId;
+                    menuItemElement.dataset.itemId = item.id;
+                    menuItemElement.dataset.type = item.type;
+                    menuItemElement.dataset.spicy = item.spicy;
+
+                    const typeIcon = `<span class="${item.type}-icon"></span>`;
+                    const spicyIcon = item.spicy ? '<i class="fas fa-pepper-hot spicy-icon"></i>' : '';
+
+                    menuItemElement.innerHTML = `
+                        <div class="item-quantity-badge" data-item-id="${item.id}" title="Click to edit quantity">0</div>
+                        <img src="${item.img}" alt="${item.name}" class="menu-item-image">
+                        <div class="menu-item-details">
+                            <div class="menu-item-name">
+                                ${typeIcon}
+                                <span>${item.name}</span>
+                                ${spicyIcon}
+                            </div>
+                            <div class="menu-item-price">₹${item.price}</div>
+                            <div class="menu-item-info">
+                                <div class="info-description">${item.description}</div>
+                                <div class="info-calories">Approx. ${item.baseCalories} kcal</div>
+                            </div>
+                            <div class="menu-item-actions">
+                                <button class="quantity-btn add-item" data-item-id="${item.id}">+</button>
+                            </div>
+                        </div>`;
+                    menuGrid.appendChild(menuItemElement);
+                });
+            }
+          }
+          function renderCategoryNav() {
+            const categoryOrder = ["Soups", "Salad", "Appetizers", "Momos", "Baos", "Japanese Bowls", "Pan Asian Special", "Thai Curry Special", "Main Course", "Rice", "Noodles", "Dessert", "Special Dips", "Beverages"];
+            categoryNav.innerHTML = '';
+            const categories = ['All Items', ...categoryOrder];
+            categories.forEach(category => {
+              const categoryId = category.toLowerCase().replace(/[^a-zA-Z0-9]/g, '-');
+              const button = document.createElement('button');
+              button.className = 'category-btn';
+              button.dataset.category = categoryId;
+              button.textContent = category;
+              if (category === 'All Items') button.classList.add('active');
+              categoryNav.appendChild(button);
+            });
+          }
+          // --- ADD-ON & NOTES LOGIC ---
+          function openAddonModal(item) {
+            document.getElementById('addon-modal-title').textContent = `Add Extras for ${item.name}`;
+            addonList.innerHTML = '';
+            if (item.availableAddons.length === 0) {
+                 addonList.innerHTML = '<div>No add-ons available for this item.</div>';
+            } else {
+                item.availableAddons.forEach(addonKey => {
+                    const addon = addOnsData[addonKey];
+                    addonList.innerHTML += `
+                        <div class="addon-item">
+                            <input type="checkbox" id="${addonKey}" name="addon" value="${addonKey}">
+                            <label for="${addonKey}">
+                                ${addon.name}
+                                <div class="addon-details">
+                                    +₹${addon.price} / +${addon.calories} kcal (${addon.portionSize})
+                                </div>
+                            </label>
+                        </div>`;
+                });
+            }
+            addonModal.dataset.itemId = item.id;
+            addonModal.style.display = 'flex';
+          }
+          function closeAddonModal() {
+            addonModal.style.display = 'none';
+          }
+          function handleConfirmAddon() {
+            const item = menuData.find(i => i.id === addonModal.dataset.itemId);
+            const selectedAddons = Array.from(document.querySelectorAll('#addon-list input:checked')).map(cb => cb.value);
+            addItemToOrder(item, selectedAddons);
+            closeAddonModal();
+          }
+          function handleAddNote(orderItemId) {
+            const itemIndex = currentOrder.findIndex(item => item.id === orderItemId);
+            if (itemIndex === -1) return;
+            const currentNote = currentOrder[itemIndex].note || '';
+            const newNote = prompt(`Add a note for "${currentOrder[itemIndex].name}":`, currentNote);
+            if (newNote !== null) {
+              currentOrder[itemIndex].note = newNote.trim();
+              updateOrderSummary();
+            }
+          }
+          // --- ORDER MANAGEMENT LOGIC ---
+          function addItemToOrder(item, selectedAddons, quantity = 1) {
+            const sortedAddonKeys = selectedAddons.sort();
+            const existingOrderItem = currentOrder.find(orderItem =>
+              orderItem.itemId === item.id && !orderItem.note && JSON.stringify(orderItem.addOns.map(a => a.key).sort()) === JSON.stringify(sortedAddonKeys)
+            );
+            if (existingOrderItem) {
+              existingOrderItem.quantity += quantity;
+            } else {
+              currentOrder.push({
+                id: `order_${Date.now()}_${Math.random()}`,
+                itemId: item.id,
+                name: item.name,
+                price: item.price,
+                baseCalories: item.baseCalories,
+                type: item.type,
+                spicy: item.spicy,
+                quantity: quantity,
+                note: '',
+                addOns: sortedAddonKeys.map(key => ({
+                  key,
+                  ...addOnsData[key]
+                }))
+              });
+            }
+            updateOrderSummary();
+          }
+          function updateItemQuantity(orderItemId, action) {
+            const itemIndex = currentOrder.findIndex(item => item.id === orderItemId);
+            if (itemIndex === -1) return;
+            if (action === 'plus') currentOrder[itemIndex].quantity++;
+            else if (action === 'minus') currentOrder[itemIndex].quantity--;
+            if (currentOrder[itemIndex].quantity <= 0) currentOrder.splice(itemIndex, 1);
+            updateOrderSummary();
+          }
+          function setItemQuantity(itemId, newQuantity) {
+            let foundItemWithoutAddonsOrNote = false;
+            for (let item of currentOrder) {
+              if (item.itemId === itemId && !item.note && item.addOns.length === 0) {
+                item.quantity = newQuantity;
+                foundItemWithoutAddonsOrNote = true;
+                break;
+              }
+            }
+            if (!foundItemWithoutAddonsOrNote && newQuantity > 0) {
+              const itemData = menuData.find(item => item.id === itemId);
+              addItemToOrder(itemData, [], newQuantity);
+            }
+            currentOrder = currentOrder.filter(item => item.quantity > 0);
+            updateOrderSummary();
+          }
+          function updateOrderSummary() {
+            orderItemsElement.innerHTML = '';
+            let subtotal = 0;
+            let totalItems = 0;
+            if (currentOrder.length === 0) {
+              orderItemsElement.innerHTML = '<div class="empty-order">No items added yet</div>';
+            } else {
+              currentOrder.forEach(orderItem => {
+                totalItems += orderItem.quantity;
+                const addonsPrice = orderItem.addOns.reduce((sum, addon) => sum + addon.price, 0);
+                const itemTotalPrice = (orderItem.price + addonsPrice) * orderItem.quantity;
+                subtotal += itemTotalPrice;
+                
+                const typeIcon = `<span class="${orderItem.type}-icon"></span>`;
+                const spicyIcon = orderItem.spicy ? '<i class="fas fa-pepper-hot spicy-icon"></i>' : '';
+                const addonNames = orderItem.addOns.map(a => a.name).join(', ');
+                let noteHtml = orderItem.note ? `<div class="item-note-container"><i class="fas fa-comment-dots"></i> Note: ${orderItem.note}</div>` : '';
+                
+                orderItemsElement.innerHTML += `
+                    <div class="order-item-container">
+                        <div class="order-item-main">
+                            <div class="order-item-details">
+                                <div class="quantity-control">
+                                    <button class="quantity-btn" data-action="minus" data-order-item-id="${orderItem.id}">-</button>
+                                    <span style="width: 25px; text-align: center; font-weight: 600;">${orderItem.quantity}</span>
+                                    <button class="quantity-btn" data-action="plus" data-order-item-id="${orderItem.id}">+</button>
+                                </div>
+                                <div>
+                                    <div class="order-item-name">
+                                        ${typeIcon}
+                                        <span>${orderItem.name}</span>
+                                        ${spicyIcon}
+                                        <i class="fas fa-pen-to-square add-note-btn" data-order-item-id="${orderItem.id}" title="Add/Edit Note"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="order-item-price">₹${itemTotalPrice.toFixed(2)}</div>
+                        </div>
+                        ${orderItem.addOns.length > 0 ? `<div class="order-item-addons">+ ${addonNames}</div>` : ''}
+                        ${noteHtml}
+                    </div>`;
+              });
+            }
+            totalItemsCount.textContent = `Total Items: ${totalItems}`;
+            document.querySelectorAll('.item-quantity-badge').forEach(badge => {
+              const itemId = badge.dataset.itemId;
+              const itemQuantity = currentOrder.filter(item => item.itemId === itemId).reduce((sum, item) => sum + item.quantity, 0);
+              if (itemQuantity > 0) {
+                badge.textContent = itemQuantity;
+                badge.classList.add('visible');
+              } else {
+                badge.classList.remove('visible');
+              }
+            });
+            const discountType = document.getElementById('discount-type-amount').classList.contains('active') ? 'amount' : 'percent';
+            const discountValueInput = parseFloat(document.getElementById('discount-value').value) || 0;
+            let discount = (discountType === 'amount') ? Math.min(discountValueInput, subtotal) : subtotal * (discountValueInput / 100);
+            const subtotalAfterDiscount = subtotal - discount;
+            let handlingFee = (subtotal > 0 && subtotalAfterDiscount < MINIMUM_ORDER_AMOUNT) ? HANDLING_FEE : 0;
+            let ecoSaverCharge = (subtotal > 0) ? ECO_SAVER_CHARGE : 0;
+            let packingCharge = (document.querySelector('[data-option="takeaway"]').classList.contains('active') && subtotal > 0) ? PACKING_CHARGE : 0;
+            const baseForConvenienceFee = subtotalAfterDiscount + handlingFee + ecoSaverCharge + packingCharge;
+            let convenienceFee = (document.querySelector('[data-payment="upi"]').classList.contains('active')) ? baseForConvenienceFee * CONVENIENCE_FEE_PERCENT : 0;
+            const taxableAmount = subtotal - discount + packingCharge;
+            const cgst = taxableAmount * 0.025;
+            const sgst = taxableAmount * 0.025;
+            const preRoundTotal = subtotalAfterDiscount + packingCharge + handlingFee + ecoSaverCharge + convenienceFee + cgst + sgst;
+            const netTotal = Math.round(preRoundTotal);
+            const roundOffValue = netTotal - preRoundTotal;
+            document.getElementById('subtotal').textContent = `₹${subtotal.toFixed(2)}`;
+            const discountLabel = document.getElementById('discount-label');
+            if (discountType === 'percent' && discountValueInput > 0) {
+              discountLabel.textContent = `Discount (${discountValueInput}%):`;
+            } else {
+              discountLabel.textContent = 'Discount:';
+            }
+            document.getElementById('discount-row').style.display = discount > 0 ? 'flex' : 'none';
+            document.getElementById('discount-amount').textContent = `-₹${discount.toFixed(2)}`;
+            document.getElementById('packing-charge-row').style.display = packingCharge > 0 ? 'flex' : 'none';
+            document.getElementById('packing-charge').textContent = `₹${packingCharge.toFixed(2)}`;
+            document.getElementById('handling-fee-row').style.display = handlingFee > 0 ? 'flex' : 'none';
+            document.getElementById('handling-fee').textContent = `₹${handlingFee.toFixed(2)}`;
+            document.getElementById('eco-saver-row').style.display = ecoSaverCharge > 0 ? 'flex' : 'none';
+            document.getElementById('eco-saver-charge').textContent = `₹${ecoSaverCharge.toFixed(2)}`;
+            document.getElementById('convenience-fee-row').style.display = convenienceFee > 0 ? 'flex' : 'none';
+            document.getElementById('convenience-fee').textContent = `₹${convenienceFee.toFixed(2)}`;
+            document.getElementById('cgst').textContent = `₹${cgst.toFixed(2)}`;
+            document.getElementById('sgst').textContent = `₹${sgst.toFixed(2)}`;
+            const roundOffValueEl = document.getElementById('round-off-value');
+            if (roundOffValue < 0) {
+              roundOffValueEl.textContent = `-₹${Math.abs(roundOffValue).toFixed(2)}`;
+            } else {
+              roundOffValueEl.textContent = `₹${roundOffValue.toFixed(2)}`;
+            }
+            document.getElementById('round-off-row').style.display = roundOffValue.toFixed(2) != 0.00 ? 'flex' : 'none';
+            document.getElementById('net-total').textContent = `₹${netTotal.toFixed(2)}`;
+          }
+          // --- BILL GENERATION & HANDLING ---
+          function getBillData() {
+            const now = new Date();
+            const billNumber = `BILL-${now.getDate().toString().padStart(2, '0')}${(now.getMonth()+1).toString().padStart(2, '0')}${now.getFullYear()}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+            const billDate = now.toISOString();
+            let subtotal = currentOrder.reduce((sum, item) => sum + (item.price + item.addOns.reduce((s, a) => s + a.price, 0)) * item.quantity, 0);
+            const totalCalories = currentOrder.reduce((sum, item) => sum + (item.baseCalories + item.addOns.reduce((s, a) => s + a.calories, 0)) * item.quantity, 0);
+            const discountType = document.getElementById('discount-type-amount').classList.contains('active') ? 'amount' : 'percent';
+            const discountValue = parseFloat(document.getElementById('discount-value').value) || 0;
+            let discount = (discountType === 'amount') ? Math.min(discountValue, subtotal) : subtotal * (discountValue / 100);
+            const subtotalAfterDiscount = subtotal - discount;
+            let handlingFee = (subtotal > 0 && subtotalAfterDiscount < MINIMUM_ORDER_AMOUNT) ? HANDLING_FEE : 0;
+            let ecoSaverCharge = (subtotal > 0) ? ECO_SAVER_CHARGE : 0;
+            let packingCharge = (document.querySelector('[data-option="takeaway"]').classList.contains('active') && subtotal > 0) ? PACKING_CHARGE : 0;
+            const baseForConvenienceFee = subtotalAfterDiscount + handlingFee + ecoSaverCharge + packingCharge;
+            let convenienceFee = (document.querySelector('[data-payment="upi"]').classList.contains('active')) ? baseForConvenienceFee * CONVENIENCE_FEE_PERCENT : 0;
+            const taxableAmount = subtotal - discount + packingCharge;
+            const cgst = taxableAmount * 0.025;
+            const sgst = taxableAmount * 0.025;
+            const preRoundTotal = subtotalAfterDiscount + packingCharge + handlingFee + ecoSaverCharge + convenienceFee + cgst + sgst;
+            const netTotal = Math.round(preRoundTotal);
+            const roundOffValue = netTotal - preRoundTotal;
+            return {
+              billNumber,
+              customerName: document.getElementById('customer-name').value || 'Walk-in Customer',
+              customerPhone: document.getElementById('customer-phone').value || 'Not provided',
+              table: document.querySelector('[data-option="dine-in"]').classList.contains('active') ? document.getElementById('table-number').value : 'Takeaway',
+              date: billDate,
+              order: JSON.parse(JSON.stringify(currentOrder)),
+              subtotal,
+              discount,
+              discountType,
+              discountValue,
+              packingCharge,
+              handlingFee,
+              ecoSaverCharge,
+              convenienceFee,
+              cgst,
+              sgst,
+              roundOffValue,
+              netTotal,
+              paymentMethod: document.querySelector('[data-payment="cash"]').classList.contains('active') ? 'Cash' : 'UPI',
+              totalCalories
+            };
+          }
+          function populateBill(billData) {
+            document.getElementById('bill-number').textContent = billData.billNumber;
+            const orderDate = new Date(billData.date);
+            document.getElementById('bill-date').textContent = orderDate.toLocaleDateString('en-IN', {
+              day: 'numeric',
+              month: 'long',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit'
+            });
+            document.getElementById('bill-customer-name').textContent = `Customer Name: ${billData.customerName}`;
+            document.getElementById('bill-customer-phone').textContent = `Customer Phone: ${billData.customerPhone}`;
+            document.getElementById('bill-table').textContent = `Table: ${billData.table}`;
+            const billItemsList = document.getElementById('bill-items-list');
+            billItemsList.innerHTML = '';
+            if (Array.isArray(billData.order)) {
+              billData.order.forEach(item => {
+                const addonsPrice = (item.addOns || []).reduce((sum, addon) => sum + addon.price, 0);
+                const itemTotal = (item.price + addonsPrice) * item.quantity;
+                const typeIcon = `<span class="${item.type}-icon"></span>`;
+                const spicyIcon = item.spicy ? '<i class="fas fa-pepper-hot spicy-icon"></i>' : '';
+
+                billItemsList.innerHTML += `<tr><td>${typeIcon} ${item.name} ${spicyIcon}</td><td>${item.quantity}</td><td>₹${(item.price + addonsPrice).toFixed(2)}</td><td>₹${itemTotal.toFixed(2)}</td></tr>`;
+                if (item.addOns && item.addOns.length > 0) {
+                  item.addOns.forEach(addon => {
+                    billItemsList.innerHTML += `<tr class="addon-row"><td colspan="4">+ ${addon.name}</td></tr>`;
+                  });
+                }
+                if (item.note) {
+                  billItemsList.innerHTML += `<tr class="note-row"><td colspan="4"><i class="fas fa-comment-dots"></i> ${item.note}</td></tr>`;
+                }
+              });
+            }
+            let discountLabelText = (billData.discountType === 'percent' && billData.discountValue > 0) ? `Discount (${billData.discountValue}%)` : 'Discount';
+            let roundOffDisplay = '';
+            if (billData.roundOffValue < 0) {
+              roundOffDisplay = `-₹${Math.abs(billData.roundOffValue).toFixed(2)}`;
+            } else {
+              roundOffDisplay = `₹${billData.roundOffValue.toFixed(2)}`;
+            }
+            let summaryHtml = `<div class="summary-row"><span class="summary-label">Subtotal:</span><span class="summary-value">₹${billData.subtotal.toFixed(2)}</span></div>`;
+            if (billData.discount > 0) summaryHtml += `<div class="summary-row"><span class="summary-label">${discountLabelText}:</span><span class="summary-value">-₹${billData.discount.toFixed(2)}</span></div>`;
+            if (billData.packingCharge > 0) summaryHtml += `<div class="summary-row"><span class="summary-label">Packing Charge:</span><span class="summary-value">₹${billData.packingCharge.toFixed(2)}</span></div>`;
+            if (billData.handlingFee > 0) summaryHtml += `<div class="summary-row"><span class="summary-label">Handling Fee:</span><span class="summary-value">₹${billData.handlingFee.toFixed(2)}</span></div>`;
+            if (billData.ecoSaverCharge > 0) summaryHtml += `<div class="summary-row"><span class="summary-label">Eco-Saver Charge:</span><span class="summary-value">₹${billData.ecoSaverCharge.toFixed(2)}</span></div>`;
+            if (billData.convenienceFee > 0) summaryHtml += `<div class="summary-row"><span class="summary-label">Convenience Fee:</span><span class="summary-value">₹${billData.convenienceFee.toFixed(2)}</span></div>`;
+            summaryHtml += `<div class="summary-row"><span class="summary-label">CGST (2.5%):</span><span class="summary-value">₹${billData.cgst.toFixed(2)}</span></div>`;
+            summaryHtml += `<div class="summary-row"><span class="summary-label">SGST (2.5%):</span><span class="summary-value">₹${billData.sgst.toFixed(2)}</span></div>`;
+            if (billData.roundOffValue && billData.roundOffValue.toFixed(2) != 0.00) summaryHtml += `<div class="summary-row"><span class="summary-label">Round Off:</span><span class="summary-value">${roundOffDisplay}</span></div>`;
+            summaryHtml += `<div class="summary-row total"><span class="summary-label">Net Total:</span><span class="summary-value">₹${billData.netTotal.toFixed(2)}</span></div>`;
+            document.querySelector('.bill-summary').innerHTML = summaryHtml;
+            const calorieInfoBox = document.getElementById('bill-calories-info');
+            const nutritionNote = document.getElementById('nutrition-note');
+            const numPeople = (billData.totalCalories / AVG_ADULT_DAILY_CALORIES).toFixed(1);
+            document.getElementById('bill-calories-total').textContent = `Estimated Total Calories: ${billData.totalCalories.toFixed(0)} kcal`;
+            nutritionNote.innerHTML = `<i class="fas fa-leaf"></i> This meal provides the daily energy needs for ~${numPeople} adult(s).`;
+            calorieInfoBox.style.display = billData.totalCalories > 0 ? 'block' : 'none';
+            nutritionNote.style.display = billData.totalCalories > 0 ? 'block' : 'none';
+            
+            document.getElementById('packing-charge-explanation').style.display = billData.packingCharge > 0 ? 'block' : 'none';
+            document.getElementById('handling-fee-explanation').style.display = billData.handlingFee > 0 ? 'block' : 'none';
+            document.getElementById('eco-saver-explanation').style.display = billData.ecoSaverCharge > 0 ? 'block' : 'none';
+            document.getElementById('convenience-fee-explanation').style.display = billData.convenienceFee > 0 ? 'block' : 'none';
+
+            const cashDetails = document.getElementById('cash-payment-details');
+            const upiDetails = document.getElementById('upi-payment-details');
+            if (billData.paymentMethod === 'Cash') {
+              cashDetails.style.display = 'block';
+              upiDetails.style.display = 'none';
+            } else {
+              cashDetails.style.display = 'none';
+              upiDetails.style.display = 'block';
+              const upiString = `upi://pay?pa=8777845713@upi&pn=SpiceGarden&am=${billData.netTotal.toFixed(2)}&cu=INR`;
+              document.getElementById('bill-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiString)}`;
+            }
+          }
+          function resetOrder() {
+            currentOrder = [];
+            document.getElementById('discount-value').value = '';
+            document.getElementById('customer-name').value = '';
+            document.getElementById('customer-phone').value = '';
+            updateOrderSummary();
+            document.getElementById('bill-modal').style.display = 'none';
+          }
+          function generateBill() {
+            if (currentOrder.length === 0) {
+              alert("Cannot generate an empty bill.");
+              return;
+            }
+            const billData = getBillData();
+            saveOrder(billData);
+            populateBill(billData);
+            document.getElementById('bill-modal-actions').style.display = isViewMode ? 'none' : 'flex';
+            document.getElementById('bill-modal').style.display = 'flex';
+            return billData;
+          }
+          function loadRecentOrders() {
+            recentOrdersList.innerHTML = '';
+            if (orders.length === 0) {
+              recentOrdersList.innerHTML = '<div class="empty-orders">No recent orders found</div>';
+              return;
+            }
+            let lastOrderDate = null;
+            orders.sort((a, b) => new Date(b.date) - new Date(a.date));
+            orders.forEach((order, index) => {
+              const orderDate = new Date(order.date);
+              const orderDateString = orderDate.toDateString();
+              if (orderDateString !== lastOrderDate) {
+                lastOrderDate = orderDateString;
+                const dateHeader = document.createElement('div');
+                dateHeader.className = 'order-date-header';
+                dateHeader.innerHTML = `<span>${orderDate.toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span><button class="btn btn-secondary btn-sm date-select-btn" data-date="${orderDateString}"><i class="fas fa-check-square"></i> Select Day</button>`;
+                recentOrdersList.appendChild(dateHeader);
+              }
+              const formattedDate = orderDate.toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              });
+              let orderItemsHtml = '';
+              if (Array.isArray(order.order)) {
+                order.order.forEach(item => {
+                  const addonsPrice = (item.addOns || []).reduce((sum, addon) => sum + addon.price, 0);
+                  orderItemsHtml += `<div class="order-card-item"><span>${item.name} x${item.quantity}</span><span>₹${((item.price + addonsPrice) * item.quantity).toFixed(2)}</span></div>`;
+                });
+              } else {
+                for (const [item, details] of Object.entries(order.order)) {
+                  orderItemsHtml += `<div class="order-card-item"><span>${item} x${details.quantity}</span><span>₹${(details.quantity * details.price).toFixed(2)}</span></div>`;
+                }
+              }
+              const orderCard = document.createElement('div');
+              orderCard.className = 'order-card';
+              orderCard.dataset.date = orderDateString;
+              orderCard.innerHTML = `<input type="checkbox" class="order-checkbox" data-index="${index}"><div class="order-card-header"><div class="order-card-title"><i class="fas fa-receipt"></i> ${order.billNumber}</div><div class="order-card-date">${formattedDate}</div></div><div class="customer-details"><div>${order.customerName}</div><div>${order.customerPhone}</div><div>${order.table}</div></div><div class="order-card-items">${orderItemsHtml}</div><div class="order-card-total">Total: ₹${order.netTotal.toFixed(2)}</div><div class="order-card-actions"><button class="btn btn-primary btn-sm view-order" data-index="${index}"><i class="fas fa-eye"></i> View</button><button class="btn btn-whatsapp btn-sm resend-order" data-index="${index}"><i class="fab fa-whatsapp"></i> Resend</button></div>`;
+              recentOrdersList.appendChild(orderCard);
+            });
+            updateSelectionButtons();
+          }
+          function viewOrder(index) {
+            isViewMode = true;
+            populateBill(orders[index]);
+            document.getElementById('bill-modal-actions').style.display = 'none';
+            document.getElementById('bill-modal').style.display = 'flex';
+          }
+          // --- EVENT LISTENERS ---
+          function initializeEventListeners() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+              tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(content => {
+                  content.classList.remove('active');
+                  if (content.id === tabId) content.classList.add('active');
+                });
+                if (tabId === 'recent-orders') loadRecentOrders();
+              });
+            });
+            categoryNav.addEventListener('click', (e) => {
+              if (e.target.classList.contains('category-btn')) {
+                const categoryId = e.target.dataset.category;
+                document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+
+                document.querySelectorAll('.sub-filter-btn.active').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.sub-filter-btn[data-filter="all"]').forEach(btn => btn.classList.add('active'));
+
+                if(categoryId === 'all-items') {
+                   document.querySelectorAll('.category-title, .menu-item').forEach(el => el.style.display = 'flex');
+                } else {
+                    document.querySelectorAll('.category-title, .menu-item').forEach(el => {
+                        el.style.display = (el.dataset.category === categoryId) ? 'flex' : 'none';
+                    });
+                }
+              }
+            });
+            menuGrid.addEventListener('click', (e) => {
+              const filterBtn = e.target.closest('.sub-filter-btn');
+              if (filterBtn) {
+                  const filter = filterBtn.dataset.filter;
+                  const categoryTitle = filterBtn.closest('.category-title');
+                  const categoryId = categoryTitle.dataset.category;
+
+                  categoryTitle.querySelectorAll('.sub-filter-btn').forEach(btn => btn.classList.remove('active'));
+                  filterBtn.classList.add('active');
+
+                  const itemsInCategory = document.querySelectorAll(`.menu-item[data-category="${categoryId}"]`);
+                  itemsInCategory.forEach(item => {
+                      let show = false;
+                      if (filter === 'all') {
+                          show = true;
+                      } else if (filter === 'spicy') {
+                          if (item.dataset.spicy === 'true') show = true;
+                      } else if (filter === 'non-veg') {
+                          const type = item.dataset.type;
+                          if (type === 'non-veg' || type === 'seafood' || type === 'egg') show = true;
+                      } else {
+                          if (item.dataset.type === filter) show = true;
+                      }
+                      item.style.display = show ? 'flex' : 'none';
+                  });
+              }
+
+              const addButton = e.target.closest('.add-item');
+              if (addButton) {
+                const item = menuData.find(i => i.id === addButton.dataset.itemId);
+                if (item.availableAddons && item.availableAddons.length > 0) {
+                  openAddonModal(item);
+                } else {
+                  addItemToOrder(item, []);
+                }
+              }
+              const badge = e.target.closest('.item-quantity-badge');
+              if (badge) {
+                const itemId = badge.dataset.itemId;
+                const itemData = menuData.find(i => i.id === itemId);
+                const currentQuantity = currentOrder.filter(item => item.itemId === itemId).reduce((sum, item) => sum + item.quantity, 0);
+                const newQuantityStr = prompt(`Enter new total quantity for '${itemData.name}':`, currentQuantity);
+                if (newQuantityStr !== null) {
+                  const newQuantity = parseInt(newQuantityStr);
+                  if (!isNaN(newQuantity) && newQuantity >= 0) {
+                    currentOrder = currentOrder.filter(item => item.itemId !== itemId);
+                    if (newQuantity > 0) {
+                      addItemToOrder(itemData, [], newQuantity);
+                    }
+                    updateOrderSummary();
+                  } else {
+                    alert("Invalid quantity. Please enter a non-negative number.");
+                  }
+                }
+              }
+            });
+            orderItemsElement.addEventListener('click', (e) => {
+              const qtyButton = e.target.closest('.quantity-btn');
+              if (qtyButton) {
+                updateItemQuantity(qtyButton.dataset.orderItemId, qtyButton.dataset.action);
+              }
+              const noteButton = e.target.closest('.add-note-btn');
+              if (noteButton) {
+                handleAddNote(noteButton.dataset.orderItemId);
+              }
+            });
+            document.getElementById('cancel-addon').addEventListener('click', closeAddonModal);
+            document.getElementById('confirm-addon').addEventListener('click', handleConfirmAddon);
+            document.getElementById('discount-type-amount').addEventListener('click', function() {
+              this.classList.add('active');
+              document.getElementById('discount-type-percent').classList.remove('active');
+              updateOrderSummary();
+            });
+            document.getElementById('discount-type-percent').addEventListener('click', function() {
+              this.classList.add('active');
+              document.getElementById('discount-type-amount').classList.remove('active');
+              updateOrderSummary();
+            });
+            document.getElementById('discount-value').addEventListener('input', updateOrderSummary);
+            document.querySelectorAll('[data-payment]').forEach(btn => {
+              btn.addEventListener('click', function() {
+                document.querySelectorAll('[data-payment]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                updateOrderSummary();
+              });
+            });
+            document.querySelectorAll('[data-option]').forEach(btn => {
+              btn.addEventListener('click', function() {
+                document.querySelectorAll('[data-option]').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById('table-selection').style.display = (this.getAttribute('data-option') === 'dine-in') ? 'block' : 'none';
+                updateOrderSummary();
+              });
+            });
+            document.getElementById('print-bill').addEventListener('click', generateBill);
+            document.getElementById('send-whatsapp').addEventListener('click', function() {
+              if (currentOrder.length === 0) {
+                alert("Cannot send an empty bill.");
+                return;
+              }
+              const customerPhone = document.getElementById('customer-phone').value;
+              if (!customerPhone) {
+                alert('Please enter customer phone number to send via WhatsApp');
+                return;
+              }
+              const billData = getBillData();
+              saveOrder(billData);
+              populateBill(billData);
+              const billContent = document.getElementById('bill-content');
+              const originalStyles = {
+                maxHeight: billContent.style.maxHeight,
+                overflowY: billContent.style.overflowY
+              };
+              billContent.style.maxHeight = 'none';
+              billContent.style.overflowY = 'visible';
+              html2canvas(billContent, {
+                scrollY: -window.scrollY,
+                useCORS: true,
+                allowTaint: true,
+                height: billContent.scrollHeight,
+                scale: 3
+              }).then(canvas => {
+                billContent.style.maxHeight = originalStyles.maxHeight;
+                billContent.style.overflowY = originalStyles.overflowY;
+                const link = document.createElement('a');
+                link.download = `${billData.billNumber}.png`;
+                link.href = canvas.toDataURL('image/png');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                let formattedPhone = customerPhone;
+                if (!formattedPhone.startsWith('+')) {
+                  formattedPhone = formattedPhone.replace(/\D/g, '');
+                  if (!formattedPhone.startsWith('91') && formattedPhone.length === 10) formattedPhone = '91' + formattedPhone;
+                  formattedPhone = '+' + formattedPhone;
+                }
+                const message = `Thank you for dining at Spice Garden! Here is your bill: ${billData.billNumber}`;
+                window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank');
+                resetOrder();
+              });
+            });
+            recentOrdersList.addEventListener('click', function(e) {
+              const viewBtn = e.target.closest('.view-order');
+              if (viewBtn) {
+                viewOrder(viewBtn.dataset.index);
+              }
+              const resendBtn = e.target.closest('.resend-order');
+              if (resendBtn) {
+                resendOrder(resendBtn.dataset.index);
+              }
+              const dateSelectBtn = e.target.closest('.date-select-btn');
+              if (dateSelectBtn) {
+                const date = dateSelectBtn.dataset.date;
+                const dayCheckboxes = document.querySelectorAll(`.order-card[data-date="${date}"] .order-checkbox`);
+                const shouldSelect = !Array.from(dayCheckboxes).every(cb => cb.checked);
+                dayCheckboxes.forEach(cb => cb.checked = shouldSelect);
+                updateSelectionButtons();
+              }
+            });
+            recentOrdersList.addEventListener('change', function(e) {
+              if (e.target.matches('.order-checkbox')) {
+                updateSelectionButtons();
+              }
+            });
+            document.getElementById('select-all').addEventListener('click', function() {
+              const checkboxes = document.querySelectorAll('.order-checkbox');
+              const allChecked = Array.from(checkboxes).every(checkbox => checkbox.checked);
+              checkboxes.forEach(checkbox => checkbox.checked = !allChecked);
+              updateSelectionButtons();
+            });
+            document.getElementById('delete-selected').addEventListener('click', function() {
+              const checkboxes = document.querySelectorAll('.order-checkbox:checked');
+              if (checkboxes.length === 0) {
+                alert('Please select at least one order to delete');
+                return;
+              }
+              if (confirm(`Are you sure you want to delete ${checkboxes.length} selected order(s)?`)) {
+                const indicesToDelete = Array.from(checkboxes).map(checkbox => parseInt(checkbox.getAttribute('data-index'))).sort((a, b) => b - a);
+                indicesToDelete.forEach(index => orders.splice(index, 1));
+                localStorage.setItem('spiceGardenOrders', JSON.stringify(orders));
+                loadRecentOrders();
+              }
+            });
+            document.getElementById('export-json').addEventListener('click', function() {
+              const checkboxes = document.querySelectorAll('.order-checkbox:checked');
+              if (checkboxes.length === 0) {
+                alert('Please select one or more bills to export to JSON.');
+                return;
+              }
+              const selectedOrders = Array.from(checkboxes).map(checkbox => orders[parseInt(checkbox.getAttribute('data-index'))]);
+              exportOrders(selectedOrders);
+            });
+            const importJsonBtn = document.getElementById('import-json');
+            const jsonImportInput = document.getElementById('json-import-input');
+            importJsonBtn.addEventListener('click', () => {
+              jsonImportInput.click();
+            });
+            jsonImportInput.addEventListener('change', (event) => {
+              const file = event.target.files[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.onload = (e) => {
+                try {
+                  const importedData = JSON.parse(e.target.result);
+                  if (!Array.isArray(importedData) || (importedData.length > 0 && !importedData[0].billNumber)) {
+                    throw new Error('Invalid JSON format.');
+                  }
+                  const existingBillNumbers = new Set(orders.map(o => o.billNumber));
+                  const newOrders = importedData.filter(importedOrder => !existingBillNumbers.has(importedOrder.billNumber));
+                  if (newOrders.length === 0) {
+                    alert('No new orders to import. All orders in the file already exist.');
+                    return;
+                  }
+                  orders = [...newOrders, ...orders].sort((a, b) => new Date(b.date) - new Date(a.date));
+                  localStorage.setItem('spiceGardenOrders', JSON.stringify(orders));
+                  loadRecentOrders();
+                  alert(`${newOrders.length} new order(s) imported successfully!`);
+                } catch (error) {
+                  alert(`Error importing file: ${error.message}`);
+                } finally {
+                  event.target.value = null;
+                }
+              };
+              reader.readAsText(file);
+            });
+            document.getElementById('export-csv').addEventListener('click', function() {
+              const checkboxes = document.querySelectorAll('.order-checkbox:checked');
+              if (checkboxes.length === 0) {
+                alert('Please select one or more bills to export to CSV.');
+                return;
+              }
+              const ordersToExport = Array.from(checkboxes).map(checkbox => orders[parseInt(checkbox.getAttribute('data-index'))]);
+              exportToCSV(ordersToExport);
+            });
+            document.getElementById('close-bill').addEventListener('click', function() {
+              document.getElementById('bill-modal').style.display = 'none';
+              isViewMode = false;
+              document.getElementById('bill-modal-actions').style.display = 'flex';
+            });
+            document.getElementById('bill-modal').addEventListener('click', function(e) {
+              if (e.target === this) {
+                this.style.display = 'none';
+                isViewMode = false;
+                document.getElementById('bill-modal-actions').style.display = 'flex';
+              }
+            });
+            document.getElementById('new-order').addEventListener('click', resetOrder);
+          }
+          function saveOrder(orderData) {
+            orders.unshift(orderData);
+            localStorage.setItem('spiceGardenOrders', JSON.stringify(orders));
+          }
+          function resendOrder(index) {
+            const order = orders[index];
+            populateBill(order);
+            const billModal = document.getElementById('bill-modal');
+            const billContent = document.getElementById('bill-content');
+            billModal.style.display = 'flex';
+            const originalStyles = {
+              maxHeight: billContent.style.maxHeight,
+              overflowY: billContent.style.overflowY
+            };
+            billContent.style.maxHeight = 'none';
+            billContent.style.overflowY = 'visible';
+            html2canvas(billContent, {
+              scrollY: -window.scrollY,
+              useCORS: true,
+              allowTaint: true,
+              height: billContent.scrollHeight,
+              scale: 3
+            }).then(canvas => {
+              billModal.style.display = 'none';
+              billContent.style.maxHeight = originalStyles.maxHeight;
+              billContent.style.overflowY = originalStyles.overflowY;
+              const now = new Date();
+              const timeStamp = `-${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
+              const link = document.createElement('a');
+              link.download = `${order.billNumber}${timeStamp}.png`;
+              link.href = canvas.toDataURL('image/png');
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              let formattedPhone = order.customerPhone;
+              if (formattedPhone && formattedPhone !== 'Not provided') {
+                if (!formattedPhone.startsWith('+')) {
+                  formattedPhone = formattedPhone.replace(/\D/g, '');
+                  if (!formattedPhone.startsWith('91') && formattedPhone.length === 10) formattedPhone = '91' + formattedPhone;
+                  formattedPhone = '+' + formattedPhone;
+                }
+                const message = `Thank you for dining at Spice Garden! Here is your bill: ${order.billNumber}`;
+                window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank');
+              } else {
+                alert('Customer phone number not available for this order, but the bill has been downloaded.');
+              }
+            });
+          }
+          function updateSelectionButtons() {
+            const allCheckboxes = document.querySelectorAll('.order-checkbox');
+            const allChecked = allCheckboxes.length > 0 && Array.from(allCheckboxes).every(checkbox => checkbox.checked);
+            document.getElementById('select-all').innerHTML = allChecked ? '<i class="fas fa-times-circle"></i> Deselect All' : '<i class="fas fa-check-square"></i> Select All';
+            document.querySelectorAll('.date-select-btn').forEach(button => {
+              const date = button.dataset.date;
+              const dayCheckboxes = document.querySelectorAll(`.order-card[data-date="${date}"] .order-checkbox`);
+              const allDayChecked = dayCheckboxes.length > 0 && Array.from(dayCheckboxes).every(cb => cb.checked);
+              button.innerHTML = allDayChecked ? '<i class="fas fa-times-circle"></i> Deselect Day' : '<i class="fas fa-check-square"></i> Select Day';
+            });
+          }
+          function exportOrders(ordersToExport) {
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(ordersToExport, null, 2));
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', `spice-garden-orders-${new Date().toISOString().slice(0,10)}.json`);
+            linkElement.click();
+          }
+          function exportToCSV(ordersToExport) {
+            if (ordersToExport.length === 0) {
+              alert('No orders to export');
+              return;
+            }
+            let csvContent = "Bill Number,Date,Customer Name,Phone,Table,Items,Subtotal,Discount Amount,Discount Info,Packing Charge,Handling Fee,Eco Charge,Convenience Fee,CGST,SGST,Round Off,Net Total,Payment Method\n";
+            ordersToExport.forEach(order => {
+              let items = '';
+              if (Array.isArray(order.order)) {
+                items = order.order.map(item => `${item.name} (x${item.quantity})${(item.addOns && item.addOns.length > 0) ? ' [' + item.addOns.map(a=>a.name).join(', ') + ']' : ''}${item.note ? ' (Note: ' + item.note + ')' : ''}`).join('; ');
+              } else {
+                items = Object.entries(order.order).map(([name, details]) => `${name} (x${details.quantity})`).join('; ');
+              }
+              const discountInfo = (order.discount > 0) ? ((order.discountType === 'percent') ? `${order.discountValue}%` : `₹${order.discountValue}`) : 'N/A';
+              const row = [order.billNumber, new Date(order.date).toLocaleDateString('en-IN'), `"${order.customerName}"`, order.customerPhone, order.table, `"${items}"`, order.subtotal.toFixed(2), (order.discount > 0 ? `-${order.discount.toFixed(2)}` : '0.00'), discountInfo, (order.packingCharge || 0).toFixed(2), (order.handlingFee || 0).toFixed(2), (order.ecoSaverCharge || 0).toFixed(2), (order.convenienceFee || 0).toFixed(2), order.cgst.toFixed(2), order.sgst.toFixed(2), (order.roundOffValue || 0).toFixed(2), order.netTotal.toFixed(2), order.paymentMethod].join(',');
+              csvContent += row + '\n';
+            });
+            const encodedUri = encodeURI('data:text/csv;charset=utf-8,' + csvContent);
+            const link = document.createElement('a');
+            link.setAttribute('href', encodedUri);
+            link.setAttribute('download', `spice-garden-orders-${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            document.body.removeChild(link);
+          }
+          // --- APP INITIALIZATION ---
+          function initializeApp() {
+            renderMenu();
+            renderCategoryNav();
+            initializeEventListeners();
+            updateOrderSummary();
+          }
+          initializeApp();
+        });
+      </script>
+  </body>
+</html>
