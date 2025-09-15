@@ -57,6 +57,74 @@
         font-size: 1.2rem;
         margin-bottom: 20px;
       }
+      /* Happy Hour Toggle Styles */
+      .happy-hour-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 15px;
+        background: linear-gradient(45deg, var(--success), #2ecc71);
+        padding: 10px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.4);
+        color: white;
+      }
+      .happy-hour-label {
+        font-size: 1.3rem;
+        font-weight: 700;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+      }
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+      }
+      input:checked+.slider {
+        background-color: var(--primary);
+      }
+      input:focus+.slider {
+        box-shadow: 0 0 1px var(--primary);
+      }
+      input:checked+.slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+      }
+      .slider.round {
+        border-radius: 34px;
+      }
+      .slider.round:before {
+        border-radius: 50%;
+      }
       .tabs {
         display: flex;
         justify-content: center;
@@ -570,10 +638,19 @@
         font-weight: 600;
         color: var(--accent);
       }
+      /* Remove flex from bill table cell */
       .bill-items td:first-child {
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        vertical-align: middle;
+      }
+      /* Style icon image within the bill */
+      .bill-items img.veg-icon,
+      .bill-items img.non-veg-icon,
+      .bill-items img.egg-icon,
+      .bill-items img.seafood-icon {
+        width: 18px;
+        height: 18px;
+        margin-right: 8px; /* Replaces flex gap */
+        vertical-align: middle;
       }
       .bill-items .addon-row td {
         display: table-cell;
@@ -623,19 +700,17 @@
         font-size: 0.9rem;
       }
       .bill-fee-explanations {
-        margin-top: 20px;
-        padding-top: 15px;
+        margin-top: 15px;
+        padding-top: 10px;
         border-top: 1px solid #eee;
-        font-size: 0.8rem;
+        font-size: 0.5rem;
         color: var(--text-secondary);
         text-align: left;
+        font-weight: 200 !important;
       }
       .fee-explanation-item {
-        margin-bottom: 8px;
-        line-height: 1.4;
-      }
-      .fee-explanation-item b {
-        font-weight: 600;
+        margin-bottom: 5px;
+        line-height: 1.2;
       }
       .print-footer {
         margin-top: 15px;
@@ -652,11 +727,27 @@
         padding: 15px;
         margin-top: 15px;
       }
-      .qr-code {
+      .qr-code-container {
+        position: relative;
         width: 180px;
         height: 180px;
         margin: 10px auto;
+      }
+      .qr-code {
+        width: 100%;
+        height: 100%;
         display: block;
+      }
+      .qr-logo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
       }
       .payment-note {
         display: flex;
@@ -773,33 +864,23 @@
         height: 20px;
         cursor: pointer;
       }
-      .veg-icon, .non-veg-icon, .egg-icon, .seafood-icon {
+      /* Switched to styling img tags instead of spans */
+      img.veg-icon,
+      img.non-veg-icon,
+      img.egg-icon,
+      img.seafood-icon {
         width: 16px;
         height: 16px;
-        display: inline-block;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
         flex-shrink: 0;
         vertical-align: middle;
         margin-bottom: 2px;
       }
-      .sub-filter-btn .veg-icon, .sub-filter-btn .non-veg-icon, 
-      .sub-filter-btn .egg-icon, .sub-filter-btn .seafood-icon {
+      .sub-filter-btn img.veg-icon,
+      .sub-filter-btn img.non-veg-icon,
+      .sub-filter-btn img.egg-icon,
+      .sub-filter-btn img.seafood-icon {
         width: 18px;
         height: 18px;
-      }
-      .veg-icon {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%234CAF50' stroke-width='2' rx='2'/%3E%3Ccircle cx='12' cy='12' r='6' fill='%234CAF50'/%3E%3C/svg%3E");
-      }
-      .non-veg-icon {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%23E53935' stroke-width='2' rx='2'/%3E%3Cpath d='m12 8l5 8H7z' fill='%23E53935'/%3E%3C/svg%3E");
-      }
-      .egg-icon {
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%23ff9800' stroke-width='2' rx='2'/%3E%3Ccircle cx='12' cy='12' r='6' fill='%23ff9800'/%3E%3C/svg%3E");
-      }
-      .seafood-icon {
-         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%2303a9f4' stroke-width='2' rx='2'/%3E%3Cpath fill='%2303a9f4' d='M21.92,11.6C21.46,10.1,19.78,9,18,9h-1.12c-0.34,0-0.67-0.17-0.85-0.45L14.7,6.47c-0.53-0.81-1.5-1.28-2.55-1.28h-0.29 c-1.05,0-2.02,0.47-2.55,1.28l-1.33,2.08C7.8,8.83,7.47,9,7.12,9H6c-1.78,0-3.46,1.1-3.92,2.6C1.61,13.08,2.2,14.9,3.5,16 c1.18,1,2.96,1.5,4.5,1.5h8c1.54,0,3.32-0.5,4.5-1.5C21.8,14.9,22.39,13.08,21.92,11.6z M7,13c-0.83,0-1.5-0.67-1.5-1.5S6.17,10,7,10 s1.5,0.67,1.5,1.5S7.83,13,7,13z M17,13c-0.83,0-1.5-0.67-1.5-1.5S16.17,10,17,10s1.5,0.67,1.5,1.5S17.83,13,17,13z'/%3E%3C/svg%3E");
       }
       .spicy-icon {
         color: var(--danger);
@@ -874,6 +955,13 @@
         <h1>POS System</h1>
         <div class="subtitle">Taste the authentic flavors of India</div>
       </header>
+      <div class="happy-hour-container">
+        <label for="happy-hour-toggle" class="happy-hour-label">Happy Hour (20% OFF)</label>
+        <label class="switch">
+          <input type="checkbox" id="happy-hour-toggle">
+          <span class="slider round"></span>
+        </label>
+      </div>
       <div class="tabs">
         <button class="tab active" data-tab="main-menu"> <i class="fas fa-utensils"></i> Main Menu </button>
         <button class="tab" data-tab="recent-orders"> <i class="fas fa-history"></i> Recent Orders </button>
@@ -891,6 +979,10 @@
           </div>
           <div class="order-summary">
             <div class="summary-row"> <span class="summary-label">Subtotal:</span> <span class="summary-value" id="subtotal">₹0</span> </div>
+            <div class="summary-row" id="happy-hour-row" style="display: none;">
+              <span class="summary-label" style="color: var(--success); font-weight: 700;">Happy Hour Savings:</span>
+              <span class="summary-value" id="happy-hour-discount" style="color: var(--success); font-weight: 700;">₹0</span>
+            </div>
             <div class="summary-row" id="discount-row" style="display: none;">
               <span class="summary-label" id="discount-label">Discount:</span>
               <span class="summary-value" id="discount-amount">₹0</span>
@@ -1020,7 +1112,11 @@
               <div id="cash-payment-details" style="display: none;"> Payment Method: Cash<br>
                 <div style="margin: 10px 0; font-weight: 600; padding: 10px; border: 2px dashed var(--secondary); border-radius: 8px;"> Kindly pay the exact amount at the billing counter </div>
               </div>
-              <div id="upi-payment-details" style="display: none;"> Payment Method: UPI<br> <img src="" alt="UPI QR Code" class="qr-code" id="bill-qr-code">
+              <div id="upi-payment-details" style="display: none;"> Payment Method: UPI<br>
+                <div class="qr-code-container">
+                  <img src="" alt="UPI QR Code" class="qr-code" id="bill-qr-code">
+                  <img src="/icon-512.png" alt="Spice Garden Logo" class="qr-logo">
+                </div>
                 <div class="payment-note"> <i class="fas fa-info-circle"></i> Scan the QR code to pay instantly via any UPI app </div>
                 <div>
                   <h6 style="color: var(--text-secondary); font-weight: 50; margin-bottom: 10px;">──────────── Supported Apps ────────────</h6>
@@ -1097,29 +1193,28 @@
                 </div>
               </div>
             </div>
-            <div class="bill-fee-explanations" id="bill-fee-explanations">
-              <div class="fee-explanation-item" id="packing-charge-explanation" style="display: none;">
-                <b>*Packing Charge:</b> Applied to takeaway orders. This ensures your food is securely packed to maintain freshness, quality, and prevent tampering.
-              </div>
-              <div class="fee-explanation-item" id="handling-fee-explanation" style="display: none;">
-                <b>*Handling Fee:</b> Applied to orders below our minimum value of ₹200. This helps cover the additional resources used for preparing smaller, individual batches.
-              </div>
-              <div class="fee-explanation-item" id="eco-saver-explanation" style="display: none;">
-                <b>*Eco-Saver Charge:</b> A standard fee for our commitment to using high-quality, biodegradable packaging and serving products to help keep the environment clean.
-              </div>
-              <div class="fee-explanation-item" id="convenience-fee-explanation" style="display: none;">
-                <b>*Convenience Fee:</b> A small fee for UPI transactions that helps us maintain a secure and fast online payment system for your convenience.
-              </div>
-            </div>
             <div class="print-footer">
               <div class="cat-icon">ฅ^>⩊<^ ฅ๛ᡣ𐭩</div>
-                  <div>╔═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╗</div>
-                  <div>ধন্যবাদ! ● धन्यवाद! ● Thank you!</div>
-                  <div style="color: var(--primary) !important; ">｡ﾟ•┈୨♡୧┈• ｡ﾟ｡ﾟ•┈୨♡୧┈• ｡ﾟ</div>
-                  <div>দয়া করে আবার আসবেন!</div>
-                  <div>कृपया फिर आइएगा!</div>
-                  <div>Please come again!</div>
-                  <div>╚═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╝</div>
+              <div>╔═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╗</div>
+              <div>ধন্যবাদ! ● धन्यवाद! ● Thank you!</div>
+              <div style="color: var(--primary) !important; ">｡ﾟ•┈୨♡୧┈• ｡ﾟ｡ﾟ•┈୨♡୧┈• ｡ﾟ</div>
+              <div>দয়া করে আবার আসবেন!</div>
+              <div>कृपया फिर आइएगा!</div>
+              <div>Please come again!</div>
+              <div>╚═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╝</div>
+            </div>
+            <div class="bill-fee-explanations" id="bill-fee-explanations">
+              <div class="fee-explanation-item" id="packing-charge-explanation" style="display: none;">
+                <b style="font-weight: 350 !important;">*Packing Charge:</b> Applied to takeaway orders. This ensures your food is securely packed to maintain freshness, quality, and prevent tampering.
+              </div>
+              <div class="fee-explanation-item" id="handling-fee-explanation" style="display: none;">
+                <b style="font-weight: 350 !important;">*Handling Fee:</b> Applied to orders below our minimum value of ₹200. This helps cover the additional resources used for preparing smaller, individual batches.
+              </div>
+              <div class="fee-explanation-item" id="eco-saver-explanation" style="display: none;">
+                <b style="font-weight: 350 !important;">*Eco-Saver Charge:</b> A standard fee for our commitment to using high-quality, biodegradable packaging and serving products to help keep the environment clean.
+              </div>
+              <div class="fee-explanation-item" id="convenience-fee-explanation" style="display: none;">
+                <b style="font-weight: 350 !important;">*Convenience Fee:</b> A small fee for UPI transactions that helps us maintain a secure and fast online payment system for your convenience.
               </div>
             </div>
           </div>
@@ -1133,153 +1228,398 @@
       <script>
         document.addEventListener('DOMContentLoaded', function() {
           // --- DATA DEFINITIONS ---
-          const addOnsData = {
-              extraCheese: { name: 'Extra Cheese', price: 40, calories: 80, portionSize: '1 slice' },
-              butter: { name: 'Butter', price: 20, calories: 100, portionSize: '10g' },
-              extraPaneer: { name: 'Extra Paneer', price: 60, calories: 150, portionSize: '4-5 pcs' },
-              extraChicken: { name: 'Extra Chicken', price: 80, calories: 180, portionSize: '4-5 pcs' },
-              extraShrimp: { name: 'Extra Shrimp', price: 100, calories: 120, portionSize: '3-4 pcs' },
-              extraVeggies: { name: 'Extra Veggies', price: 40, calories: 30, portionSize: 'approx. 50g' },
-              extraBoiledEgg: { name: 'Extra Boiled Egg', price: 25, calories: 78, portionSize: '1 pc' },
-              extraScrambledEgg: { name: 'Extra Scrambled Egg', price: 35, calories: 100, portionSize: '1 egg' },
-              extraFriedEgg: { name: 'Extra Fried Egg', price: 30, calories: 90, portionSize: '1 pc' }
+
+          // Centralized Icon Data URIs for robust rendering
+          const iconDataUris = {
+            veg: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%234CAF50' stroke-width='2' rx='2'/%3E%3Ccircle cx='12' cy='12' r='6' fill='%234CAF50'/%3E%3C/svg%3E",
+            'non-veg': "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%23E53935' stroke-width='2' rx='2'/%3E%3Cpath d='m12 8l5 8H7z' fill='%23E53935'/%3E%3C/svg%3E",
+            egg: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%23ff9800' stroke-width='2' rx='2'/%3E%3Ccircle cx='12' cy='12' r='6' fill='%23ff9800'/%3E%3C/svg%3E",
+            seafood: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='20' height='20' x='2' y='2' fill='none' stroke='%2303a9f4' stroke-width='2' rx='2'/%3E%3Cpath fill='%2303a9f4' d='M21.92,11.6C21.46,10.1,19.78,9,18,9h-1.12c-0.34,0-0.67-0.17-0.85-0.45L14.7,6.47c-0.53-0.81-1.5-1.28-2.55-1.28h-0.29 c-1.05,0-2.02,0.47-2.55,1.28l-1.33,2.08C7.8,8.83,7.47,9,7.12,9H6c-1.78,0-3.46,1.1-3.92,2.6C1.61,13.08,2.2,14.9,3.5,16 c1.18,1,2.96,1.5,4.5,1.5h8c1.54,0,3.32-0.5,4.5-1.5C21.8,14.9,22.39,13.08,21.92,11.6z M7,13c-0.83,0-1.5-0.67-1.5-1.5S6.17,10,7,10 s1.5,0.67,1.5,1.5S7.83,13,7,13z M17,13c-0.83,0-1.5-0.67-1.5-1.5S16.17,10,17,10s1.5,0.67,1.5,1.5S17.83,13,17,13z'/%3E%3C/svg%3E"
           };
-
+          const addOnsData = {
+            extraCheese: {
+              name: 'Extra Cheese',
+              price: 40,
+              calories: 80,
+              portionSize: '1 slice'
+            },
+            butter: {
+              name: 'Butter',
+              price: 20,
+              calories: 100,
+              portionSize: '10g'
+            },
+            extraPaneer: {
+              name: 'Extra Paneer',
+              price: 60,
+              calories: 150,
+              portionSize: '4-5 pcs'
+            },
+            extraChicken: {
+              name: 'Extra Chicken',
+              price: 80,
+              calories: 180,
+              portionSize: '4-5 pcs'
+            },
+            extraShrimp: {
+              name: 'Extra Shrimp',
+              price: 100,
+              calories: 120,
+              portionSize: '3-4 pcs'
+            },
+            extraVeggies: {
+              name: 'Extra Veggies',
+              price: 40,
+              calories: 30,
+              portionSize: 'approx. 50g'
+            },
+            extraBoiledEgg: {
+              name: 'Extra Boiled Egg',
+              price: 25,
+              calories: 78,
+              portionSize: '1 pc'
+            },
+            extraScrambledEgg: {
+              name: 'Extra Scrambled Egg',
+              price: 35,
+              calories: 100,
+              portionSize: '1 egg'
+            },
+            extraFriedEgg: {
+              name: 'Extra Fried Egg',
+              price: 30,
+              calories: 90,
+              portionSize: '1 pc'
+            }
+          };
           const menuData = [
-  // Soups
-  { id: 'hotsoursoupveg', name: 'Hot & Sour Soup (Veg)', price: 185, category: 'Soups', type: 'veg', spicy: true, img: 'images/Soups/Hot & Sour Soup (Veg).jpg', description: 'Classic spicy and sour soup with vegetables.', baseCalories: 150, availableAddons: ['extraVeggies'] },
-  { id: 'hotsoursoupchicken', name: 'Hot & Sour Soup (Chicken)', price: 205, category: 'Soups', type: 'non-veg', spicy: true, img: 'images/Soups/Hot & Sour Soup (Chicken).jpg', description: 'Classic spicy and sour soup with chicken.', baseCalories: 180, availableAddons: ['extraChicken'] },
-  { id: 'hotsoursoupprawn', name: 'Hot & Sour Soup (Prawn)', price: 225, category: 'Soups', type: 'seafood', spicy: true, img: 'images/Soups/Hot & Sour Soup (Prawn).jpg', description: 'Classic spicy and sour soup with prawns.', baseCalories: 170, availableAddons: ['extraShrimp'] },
-  { id: 'sweetcornsoupveg', name: 'Sweet Corn Soup (Veg)', price: 185, category: 'Soups', type: 'veg', spicy: false, img: 'images/Soups/Sweet Corn Soup (Veg).jpg', description: 'Creamy and comforting sweet corn soup.', baseCalories: 160, availableAddons: ['extraVeggies'] },
-  { id: 'sweetcornsoupchicken', name: 'Sweet Corn Soup (Chicken)', price: 205, category: 'Soups', type: 'non-veg', spicy: false, img: 'images/Soups/Sweet Corn Soup (Chicken).jpg', description: 'Creamy sweet corn soup with chicken.', baseCalories: 190, availableAddons: ['extraChicken'] },
-  { id: 'lungfungsoupchicken', name: 'Lung Fung Soup (Chicken)', price: 215, category: 'Soups', type: 'egg', spicy: false, img: 'images/Soups/Lung Fung Soup (Chicken).jpg', description: 'Thick, creamy soup with chicken and egg.', baseCalories: 200, availableAddons: ['extraChicken', 'extraFriedEgg'] },
-  { id: 'manchowsoupveg', name: 'Manchow Soup (Veg)', price: 185, category: 'Soups', type: 'veg', spicy: true, img: 'images/Soups/Manchow Soup (Veg).jpg', description: 'Spicy soup with vegetables, topped with crispy noodles.', baseCalories: 170, availableAddons: ['extraVeggies'] },
-  { id: 'manchowsoupchicken', name: 'Manchow Soup (Chicken)', price: 205, category: 'Soups', type: 'non-veg', spicy: true, img: 'images/Soups/Manchow Soup (Chicken).jpg', description: 'Spicy soup with chicken, topped with crispy noodles.', baseCalories: 200, availableAddons: ['extraChicken'] },
-  { id: 'manchowsoupprawn', name: 'Manchow Soup (Prawn)', price: 225, category: 'Soups', type: 'seafood', spicy: true, img: 'images/Soups/Manchow Soup (Prawn).jpg', description: 'Spicy soup with prawns, topped with crispy noodles.', baseCalories: 190, availableAddons: ['extraShrimp'] },
-  { id: 'lemoncoriandersoupveg', name: 'Lemon Coriander Soup (Veg)', price: 185, category: 'Soups', type: 'veg', spicy: false, img: 'images/Soups/Lemon Coriander Soup (Veg).jpg', description: 'Clear soup with a refreshing lemon and coriander flavor.', baseCalories: 140, availableAddons: ['extraVeggies'] },
-  { id: 'lemoncoriandersoupchicken', name: 'Lemon Coriander Soup (Chicken)', price: 205, category: 'Soups', type: 'non-veg', spicy: false, img: 'images/Soups/Lemon Coriander Soup (Chicken).jpg', description: 'Clear chicken soup with a refreshing lemon and coriander flavor.', baseCalories: 170, availableAddons: ['extraChicken'] },
-  { id: 'lemoncoriandersoupprawn', name: 'Lemon Coriander Soup (Prawn)', price: 225, category: 'Soups', type: 'seafood', spicy: false, img: 'images/Soups/Lemon Coriander Soup (Prawn).jpg', description: 'Clear prawn soup with a refreshing lemon and coriander flavor.', baseCalories: 160, availableAddons: ['extraShrimp'] },
-  { id: 'tomyumsoupveg', name: 'Tom Yum Soup (Veg)', price: 185, category: 'Soups', type: 'veg', spicy: true, img: 'images/Soups/Tom Yum Soup (Veg).jpg', description: 'Thai hot and sour soup with vegetables.', baseCalories: 150, availableAddons: ['extraVeggies'] },
-  { id: 'tomyumsoupchicken', name: 'Tom Yum Soup (Chicken)', price: 205, category: 'Soups', type: 'non-veg', spicy: true, img: 'images/Soups/Tom Yum Soup (Chicken).jpg', description: 'Thai hot and sour soup with chicken.', baseCalories: 180, availableAddons: ['extraChicken'] },
-  { id: 'tomyumsoupprawn', name: 'Tom Yum Soup (Prawn)', price: 225, category: 'Soups', type: 'seafood', spicy: true, img: 'images/Soups/Tom Yum Soup (Prawn).jpg', description: 'Thai hot and sour soup with prawns.', baseCalories: 170, availableAddons: ['extraShrimp'] },
-  { id: 'tomkhasoupveg', name: 'Tom Kha Soup (Veg)', price: 205, category: 'Soups', type: 'veg', spicy: false, img: 'images/Soups/Tom Kha Soup (Veg).jpg', description: 'Creamy Thai coconut soup with vegetables.', baseCalories: 220, availableAddons: ['extraVeggies'] },
-  { id: 'tomkhasoupchicken', name: 'Tom Kha Soup (Chicken)', price: 245, category: 'Soups', type: 'non-veg', spicy: false, img: 'images/Soups/Tom Kha Soup (Chicken).jpg', description: 'Creamy Thai coconut soup with chicken.', baseCalories: 260, availableAddons: ['extraChicken'] },
-  { id: 'tomkhasoupprawn', name: 'Tom Kha Soup (Prawn)', price: 275, category: 'Soups', type: 'seafood', spicy: false, img: 'images/Soups/Tom Kha Soup (Prawn).jpg', description: 'Creamy Thai coconut soup with prawns.', baseCalories: 250, availableAddons: ['extraShrimp'] },
-  { id: 'laksagaisoupchicken', name: 'Laksa Gai Soup (Chicken)', price: 225, category: 'Soups', type: 'non-veg', spicy: true, img: 'images/Soups/Laksa Gai Soup (Chicken).jpg', description: 'Spicy Malaysian coconut-based noodle soup with chicken.', baseCalories: 280, availableAddons: ['extraChicken', 'extraBoiledEgg'] },
-  // Salad
-  { id: 'crispynoodlessaladveg', name: 'Crispy Noodles Salad (Veg)', price: 150, category: 'Salad', type: 'veg', spicy: false, img: 'images/Salad/Crispy Noodles Salad (Veg).jpg', description: 'A crunchy and refreshing salad.', baseCalories: 250, availableAddons: ['extraVeggies'] },
-  { id: 'crispynoodlessaladchicken', name: 'Crispy Noodles Salad (Chicken)', price: 180, category: 'Salad', type: 'non-veg', spicy: false, img: 'images/Salad/Crispy Noodles Salad (Chicken).jpg', description: 'A crunchy and refreshing salad with chicken.', baseCalories: 320, availableAddons: ['extraChicken'] },
-  { id: 'kimchisaladveg', name: 'Kimchi Salad (Veg)', price: 150, category: 'Salad', type: 'veg', spicy: true, img: 'images/Salad/Kimchi Salad (Veg).jpg', description: 'Spicy fermented Korean cabbage salad.', baseCalories: 80, availableAddons: [] },
-  { id: 'somtamsaladveg', name: 'Som Tam Salad (Veg)', price: 150, category: 'Salad', type: 'veg', spicy: true, img: 'images/Salad/Som Tam Salad (Veg).jpg', description: 'Spicy green papaya salad from Thailand.', baseCalories: 120, availableAddons: [] },
-  // Appetizers
-  { id: 'crispychillibabycorn', name: 'Crispy Chilli Babycorn', price: 250, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Crispy Chilli Babycorn.jpg', description: 'Fried babycorn tossed in a spicy sauce.', baseCalories: 320, availableAddons: [] },
-  { id: 'chillicheesestuffmushroom', name: 'Chilli Cheese Stuff Mushroom', price: 250, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Chilli Cheese Stuff Mushroom.jpg', description: 'Mushrooms stuffed with cheese and spices.', baseCalories: 340, availableAddons: ['extraCheese'] },
-  { id: 'cheesyspringroll', name: 'Cheesy Spring Roll', price: 230, category: 'Appetizers', type: 'veg', spicy: false, img: 'images/Appetizer Veg/Cheesy Spring Roll.jpg', description: 'Crispy spring rolls with a cheesy vegetable filling.', baseCalories: 300, availableAddons: ['extraCheese'] },
-  { id: 'crispychilliamericancorn', name: 'Crispy Chilli American Corn', price: 250, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Crispy Chilli American Corn.jpg', description: 'Crispy fried corn kernels tossed in spicy sauce.', baseCalories: 330, availableAddons: [] },
-  { id: 'chillipaneerdry10pcs', name: 'Chilli Paneer Dry (10 Pcs)', price: 260, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Chilli Paneer Dry (10 Pcs).jpg', description: 'Stir-fried paneer with bell peppers and onions.', baseCalories: 380, availableAddons: ['extraPaneer'] },
-  { id: 'chillibasilpaneerdry10pcs', name: 'Chilli Basil Paneer Dry (10 Pcs)', price: 260, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Chilli Basil Paneer Dry (10 Pcs).jpg', description: 'Paneer tossed in a spicy basil sauce.', baseCalories: 390, availableAddons: ['extraPaneer'] },
-  { id: 'kungpaopaneerdry10pcs', name: 'Kung Pao Paneer Dry (10 Pcs)', price: 265, category: 'Appetizers', type: 'veg', spicy: false, img: 'images/Appetizer Veg/Kung Pao Paneer Dry (10 Pcs).jpg', description: 'A sweet and savory dish with paneer and peanuts.', baseCalories: 400, availableAddons: ['extraPaneer'] },
-  { id: 'lutmemushroom', name: 'Lut Me Mushroom', price: 230, category: 'Appetizers', type: 'veg', spicy: true, img: 'images/Appetizer Veg/Lut Me Mushroom.jpg', description: 'A spicy mushroom appetizer.', baseCalories: 310, availableAddons: [] },
-  { id: 'mushroombeijingstyle', name: 'Mushroom Beijing Style', price: 265, category: 'Appetizers', type: 'veg', spicy: false, img: 'images/Appetizer Veg/Mushroom Beijing Style.jpg', description: 'Mushrooms cooked in a savory Beijing-style sauce.', baseCalories: 350, availableAddons: [] },
-  { id: 'drumsofheavenhongkongstyle8pcs', name: 'Drums of Heaven Hong Kong Style (8 Pcs)', price: 315, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Drums of Heaven Hong Kong Style (8 Pcs).jpg', description: 'Spicy and saucy chicken lollipops.', baseCalories: 550, availableAddons: [] },
-  { id: 'chickenlollipop8pcs', name: 'Chicken Lollipop (8 Pcs)', price: 305, category: 'Appetizers', type: 'non-veg', spicy: false, img: 'images/Appetizer Chicken/Chicken Lollipop (8 Pcs).jpg', description: 'Classic frenched chicken winglets.', baseCalories: 530, availableAddons: [] },
-  { id: 'panfriedchillichickendry10pcs', name: 'Pan Fried Chilli Chicken Dry (10 Pcs)', price: 325, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Pan Fried Chilli Chicken Dry (10 Pcs).jpg', description: 'Stir-fried chicken with bell peppers and onions.', baseCalories: 480, availableAddons: ['extraChicken'] },
-  { id: 'takraichicken10pcs', name: 'Takrai Chicken (10 Pcs)', price: 315, category: 'Appetizers', type: 'non-veg', spicy: false, img: 'images/Appetizer Chicken/Takrai Chicken (10 Pcs).jpg', description: 'Lemongrass flavored chicken appetizer.', baseCalories: 460, availableAddons: ['extraChicken'] },
-  { id: 'chilligarlicpepperchicken', name: 'Chilli Garlic Pepper Chicken', price: 315, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Chilli Garlic Pepper Chicken.jpg', description: 'Chicken tossed in a spicy garlic and pepper sauce.', baseCalories: 470, availableAddons: ['extraChicken'] },
-  { id: 'indobongochinesechicken10pcs', name: 'Indo Bongo Chinese Chicken (10 Pcs)', price: 315, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Indo Bongo Chinese Chicken (10 Pcs).jpg', description: 'A unique fusion chicken appetizer.', baseCalories: 490, availableAddons: ['extraChicken'] },
-  { id: 'crispyhoneychicken', name: 'Crispy Honey Chicken', price: 290, category: 'Appetizers', type: 'non-veg', spicy: false, img: 'images/Appetizer Chicken/Crispy Honey Chicken.jpg', description: 'Crispy fried chicken in a sweet honey sauce.', baseCalories: 520, availableAddons: ['extraChicken'] },
-  { id: 'wingsshandongstyle8pcs', name: 'Wings Shandong Style (8 Pcs)', price: 305, category: 'Appetizers', type: 'non-veg', spicy: false, img: 'images/Appetizer Chicken/Wings Shandong Style (8 Pcs).jpg', description: 'Chicken wings in a savory Shandong sauce.', baseCalories: 540, availableAddons: [] },
-  { id: 'assortedblackpepperdicedchicken10pcs', name: 'Assorted Black Pepper Diced Chicken (10 Pcs)', price: 305, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Assorted Black Pepper Diced Chicken (10 Pcs).jpg', description: 'Diced chicken in a peppery sauce.', baseCalories: 450, availableAddons: ['extraChicken'] },
-  { id: 'latmeikai', name: 'Lat Mei Kai', price: 330, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Lat Mei Kai.jpg', description: 'A spicy and flavorful chicken preparation.', baseCalories: 480, availableAddons: ['extraChicken'] },
-  { id: 'authentickolkatastylechillichicken10pcs', name: 'Authentic Kolkata Style Chilli Chicken (10 Pcs)', price: 345, category: 'Appetizers', type: 'non-veg', spicy: true, img: 'images/Appetizer Chicken/Authentic Kolkata Style Chilli Chicken (10 Pcs).jpg', description: 'The classic tangy and spicy chicken appetizer.', baseCalories: 500, availableAddons: ['extraChicken'] },
-  { id: 'thaichickenwithcashewnut20pcs', name: 'Thai Chicken with Cashew Nut (20 Pcs)', price: 330, category: 'Appetizers', type: 'non-veg', spicy: false, img: 'images/Appetizer Chicken/Thai Chicken with Cashew Nut (20 Pcs).jpg', description: 'Stir-fried chicken with cashew nuts in a Thai style.', baseCalories: 560, availableAddons: ['extraChicken'] },
-  { id: 'fishinbutterpeppergarlic10pcs', name: 'Fish in Butter Pepper Garlic (10 Pcs)', price: 345, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Fish in Butter Pepper Garlic (10 Pcs).jpg', description: 'Fish fillets in a rich butter pepper garlic sauce.', baseCalories: 450, availableAddons: ['butter'] },
-  { id: 'panfriedchillifish10pcs', name: 'Pan Fried Chilli Fish (10 Pcs)', price: 350, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Pan Fried Chilli Fish (10 Pcs).jpg', description: 'Pan-fried fish tossed in a spicy chilli sauce.', baseCalories: 480, availableAddons: [] },
-  { id: 'pankofriedfish10pcs', name: 'Panko Fried Fish (10 Pcs)', price: 340, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Panko Fried Fish (10 Pcs).jpg', description: 'Fish fillets coated in panko breadcrumbs and deep-fried.', baseCalories: 500, availableAddons: [] },
-  { id: 'fishinchineseparsleysauce10pcs', name: 'Fish in Chinese Parsley Sauce (10 Pcs)', price: 340, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Fish in Chinese Parsley Sauce (10 Pcs).jpg', description: 'Fish cooked in a fragrant parsley sauce.', baseCalories: 460, availableAddons: [] },
-  { id: 'fishinchillimustard10pcs', name: 'Fish in Chilli Mustard (10 Pcs)', price: 345, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Fish in Chilli Mustard (10 Pcs).jpg', description: 'A tangy and spicy fish preparation.', baseCalories: 470, availableAddons: [] },
-  { id: 'fishinchillibasil10pcs', name: 'Fish in Chilli Basil (10 Pcs)', price: 340, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Fish in Chilli Basil (10 Pcs).jpg', description: 'Fish tossed in a spicy basil sauce.', baseCalories: 460, availableAddons: [] },
-  { id: 'goldenfriedprawn8pcs', name: 'Golden Fried Prawn (8 Pcs)', price: 410, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Golden Fried Prawn (8 Pcs).jpg', description: 'Prawns deep-fried to a golden brown.', baseCalories: 520, availableAddons: [] },
-  { id: 'pancoprawn8pcs', name: 'Panco Prawn (8 Pcs)', price: 400, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Panco Prawn (8 Pcs).jpg', description: 'Prawns coated in panko breadcrumbs and fried.', baseCalories: 510, availableAddons: [] },
-  { id: 'prawninchillibasil8pcs', name: 'Prawn in Chilli Basil (8 Pcs)', price: 410, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Prawn in Chilli Basil (8 Pcs).jpg', description: 'Prawns tossed in a spicy basil sauce.', baseCalories: 490, availableAddons: ['extraShrimp'] },
-  { id: 'chilliprawndry8pcs', name: 'Chilli Prawn Dry (8 Pcs)', price: 410, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Chilli Prawn Dry (8 Pcs).jpg', description: 'Classic stir-fried chilli prawns.', baseCalories: 500, availableAddons: ['extraShrimp'] },
-  { id: 'takraiprawn8pcs', name: 'Takrai Prawn (8 Pcs)', price: 410, category: 'Appetizers', type: 'seafood', spicy: false, img: 'images/Appetizer Seafood/Takrai Prawn (8 Pcs).jpg', description: 'Lemongrass flavored prawn appetizer.', baseCalories: 480, availableAddons: ['extraShrimp'] },
-  { id: 'spicyhunanprawn8pcs', name: 'Spicy Hunan Prawn (8 Pcs)', price: 400, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Spicy Hunan Prawn (8 Pcs).jpg', description: 'Prawns cooked in a fiery Hunan sauce.', baseCalories: 490, availableAddons: ['extraShrimp'] },
-  { id: 'wholebhetkiinchoiceofsaucehotgarlicsauceschezwansaucechillisauce', name: 'Whole Bhetki in Choice of Sauce', price: 750, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Whole Bhetki in Choice of Sauce.jpg', description: 'Choice of Hot Garlic, Schezwan, or Chilli Sauce.', baseCalories: 800, availableAddons: [] },
-  { id: 'softshellcrabinchoiceofsaucehotgarlicsauceschezwansaucechillisauce', name: 'Soft Shell Crab in Choice of Sauce', price: 495, category: 'Appetizers', type: 'seafood', spicy: true, img: 'images/Appetizer Seafood/Soft Shell Crab in Choice of Sauce.jpg', description: 'Choice of Hot Garlic, Schezwan, or Chilli Sauce.', baseCalories: 600, availableAddons: [] },
-  // Momos
-  { id: 'chickenschezwanstylemomo8pcssteam', name: 'Chicken Schezwan Momo (Steam, 8 Pcs)', price: 235, category: 'Momos', type: 'non-veg', spicy: true, img: 'images/Momos/Chicken Schezwan Momo (Steam, 8 Pcs).jpg', description: 'Steamed momos with a spicy chicken filling.', baseCalories: 350, availableAddons: ['extraChicken'] },
-  { id: 'chickenSchezwanStyleMomo8PcsFried', name: 'Chicken Schezwan Momo (Fried, 8 Pcs)', price: 245, category: 'Momos', type: 'non-veg', spicy: true, img: 'images/Momos/Chicken Schezwan Momo (Fried, 8 Pcs).jpg', description: 'Fried momos with a spicy chicken filling.', baseCalories: 450, availableAddons: ['extraChicken'] },
-  { id: 'chickenSchezwanStyleMomo8PcsPanFried', name: 'Chicken Schezwan Momo (Pan-Fried, 8 Pcs)', price: 265, category: 'Momos', type: 'non-veg', spicy: true, img: 'images/Momos/Chicken Schezwan Momo (Pan-Fried, 8 Pcs).jpg', description: 'Pan-fried momos with a spicy chicken filling.', baseCalories: 480, availableAddons: ['extraChicken'] },
-  { id: 'chickenMushroomMomo8PcsSteam', name: 'Chicken & Mushroom Momo (Steam, 8 Pcs)', price: 235, category: 'Momos', type: 'non-veg', spicy: false, img: 'images/Momos/Chicken & Mushroom Momo (Steam, 8 Pcs).jpg', description: 'Steamed dumplings with chicken and mushroom.', baseCalories: 340, availableAddons: ['extraChicken'] },
-  { id: 'chickenMushroomMomo8PcsFried', name: 'Chicken & Mushroom Momo (Fried, 8 Pcs)', price: 245, category: 'Momos', type: 'non-veg', spicy: false, img: 'images/Momos/Chicken & Mushroom Momo (Fried, 8 Pcs).jpg', description: 'Fried dumplings with chicken and mushroom.', baseCalories: 440, availableAddons: ['extraChicken'] },
-  { id: 'chickenMushroomMomo8PcsPanFried', name: 'Chicken & Mushroom Momo (Pan-Fried, 8 Pcs)', price: 265, category: 'Momos', type: 'non-veg', spicy: false, img: 'images/Momos/Chicken & Mushroom Momo (Pan-Fried, 8 Pcs).jpg', description: 'Pan-fried dumplings with chicken and mushroom.', baseCalories: 470, availableAddons: ['extraChicken'] },
-  { id: 'chickenOysterBasilMomo8PcsSteam', name: 'Chicken Oyster Basil Momo (Steam, 8 Pcs)', price: 235, category: 'Momos', type: 'non-veg', spicy: false, img: 'images/Momos/Chicken Oyster Basil Momo (Steam, 8 Pcs).jpg', description: 'Steamed momos with a savory basil filling.', baseCalories: 360, availableAddons: ['extraChicken'] },
-  { id: 'prawnZucchiniHargao8PcsSteam', name: 'Prawn Zucchini Hargao (Steam, 8 Pcs)', price: 235, category: 'Momos', type: 'seafood', spicy: false, img: 'images/Momos/Prawn Zucchini Hargao (Steam, 8 Pcs).jpg', description: 'Delicate steamed prawn and zucchini dumplings.', baseCalories: 320, availableAddons: ['extraShrimp'] },
-  { id: 'vegDarjeelingMomo8PcsSteam', name: 'Veg Darjeeling Momo (Steam, 8 Pcs)', price: 205, category: 'Momos', type: 'veg', spicy: false, img: 'images/Momos/Veg Darjeeling Momo (Steam, 8 Pcs).jpg', description: 'Classic steamed vegetable momos.', baseCalories: 280, availableAddons: ['extraVeggies'] },
-  { id: 'cornCottageCheeseMomoVeg8PcsSteam', name: 'Corn & Cheese Momo (Steam, 8 Pcs)', price: 205, category: 'Momos', type: 'veg', spicy: false, img: 'images/Momos/Corn & Cheese Momo (Steam, 8 Pcs).jpg', description: 'Steamed momos with a corn and cottage cheese filling.', baseCalories: 300, availableAddons: ['extraPaneer', 'extraCheese'] },
-  // Baos
-  { id: 'chickenBarbequeBao3Pcs', name: 'Chicken Barbeque Bao (3 Pcs)', price: 245, category: 'Baos', type: 'non-veg', spicy: false, img: 'images/Baos/Chicken Barbeque Bao (3 Pcs).jpg', description: 'Soft steamed buns with a BBQ chicken filling.', baseCalories: 400, availableAddons: ['extraChicken'] },
-  { id: 'flamingBaoVeg3Pcs', name: 'Flaming Bao Veg (3 Pcs)', price: 225, category: 'Baos', type: 'veg', spicy: true, img: 'images/Baos/Flaming Bao Veg (3 Pcs).jpg', description: 'Soft steamed buns with a spicy vegetable filling.', baseCalories: 350, availableAddons: ['extraPaneer'] },
-  // Japanese Bowls
-  { id: 'japaneseRamenBowlVeg', name: 'Japanese Ramen Bowl (Veg)', price: 299, category: 'Japanese Bowls', type: 'veg', spicy: false, img: 'images/Japanese Bowls/Japanese Ramen Bowl (Veg).jpg', description: 'A hearty noodle soup bowl with vegetables.', baseCalories: 450, availableAddons: ['extraPaneer', 'extraVeggies', 'extraBoiledEgg'] },
-  { id: 'japaneseRamenBowlNonVeg', name: 'Japanese Ramen Bowl (Non-Veg)', price: 399, category: 'Japanese Bowls', type: 'non-veg', spicy: false, img: 'images/Japanese Bowls/Japanese Ramen Bowl (Non-Veg).jpg', description: 'A hearty noodle soup bowl with chicken.', baseCalories: 550, availableAddons: ['extraChicken', 'extraVeggies', 'extraBoiledEgg'] },
-  { id: 'japaneseDonburiBowlVeg', name: 'Japanese Donburi Bowl (Veg)', price: 299, category: 'Japanese Bowls', type: 'veg', spicy: false, img: 'images/Japanese Bowls/Japanese Donburi Bowl (Veg).jpg', description: 'A Japanese rice bowl with vegetables.', baseCalories: 480, availableAddons: ['extraPaneer', 'extraVeggies', 'extraFriedEgg'] },
-  { id: 'japaneseDonburiBowlNonVeg', name: 'Japanese Donburi Bowl (Non-Veg)', price: 399, category: 'Japanese Bowls', type: 'non-veg', spicy: false, img: 'images/Japanese Bowls/Japanese Donburi Bowl (Non-Veg).jpg', description: 'A Japanese rice bowl with chicken.', baseCalories: 580, availableAddons: ['extraChicken', 'extraVeggies', 'extraFriedEgg'] },
-  // Pan Asian Special
-  { id: 'dragonNoodlesMixed', name: 'Dragon Noodles (Mixed)', price: 300, category: 'Pan Asian Special', type: 'non-veg', spicy: true, img: 'images/Pan Asian Special/Dragon Noodles (Mixed).jpg', description: 'Spicy noodles with mixed meat and vegetables.', baseCalories: 500, availableAddons: ['extraChicken', 'extraShrimp', 'extraVeggies'] },
-  { id: 'stirFriedGarlicGreenBeansWithChicken', name: 'Stir Fried Garlic Green Beans with Chicken', price: 330, category: 'Pan Asian Special', type: 'non-veg', spicy: false, img: 'images/Pan Asian Special/Stir Fried Garlic Green Beans with Chicken.jpg', description: 'A savory stir-fry dish.', baseCalories: 420, availableAddons: ['extraChicken'] },
-  { id: 'crispyGingerSoyScallionFish', name: 'Crispy Ginger Soy Scallion Fish', price: 370, category: 'Pan Asian Special', type: 'seafood', spicy: false, img: 'images/Pan Asian Special/Crispy Ginger Soy Scallion Fish.jpg', description: 'Crispy fish with a ginger soy glaze.', baseCalories: 480, availableAddons: [] },
-  { id: 'thaiInfusedGranitePrawn4Pcs', name: 'Thai Infused Granite Prawn (4 Pcs)', price: 420, category: 'Pan Asian Special', type: 'seafood', spicy: false, img: 'images/Pan Asian Special/Thai Infused Granite Prawn (4 Pcs).jpg', description: 'Prawns prepared in a special Thai style.', baseCalories: 460, availableAddons: ['extraShrimp'] },
-  { id: 'leeFuNoodlesChicken', name: 'Lee Fu Noodles (Chicken)', price: 295, category: 'Pan Asian Special', type: 'non-veg', spicy: false, img: 'images/Pan Asian Special/Lee Fu Noodles (Chicken).jpg', description: 'A special noodle preparation with chicken.', baseCalories: 490, availableAddons: ['extraChicken', 'extraVeggies'] },
-  { id: 'chickenInHotBasil', name: 'Chicken in Hot Basil', price: 335, category: 'Pan Asian Special', type: 'non-veg', spicy: true, img: 'images/Pan Asian Special/Chicken in Hot Basil.jpg', description: 'Spicy stir-fried chicken with basil.', baseCalories: 430, availableAddons: ['extraChicken'] },
-  { id: 'indonesianPrawnWithMayoDip6Pcs', name: 'Indonesian Prawn with Mayo Dip (6 Pcs)', price: 420, category: 'Pan Asian Special', type: 'seafood', spicy: false, img: 'images/Pan Asian Special/Indonesian Prawn with Mayo Dip (6 Pcs).jpg', description: 'Fried prawns with a creamy mayo dip.', baseCalories: 520, availableAddons: ['extraShrimp'] },
-  { id: 'dynamitePrawn8Pcs', name: 'Dynamite Prawn (8 Pcs)', price: 460, category: 'Pan Asian Special', type: 'seafood', spicy: true, img: 'images/Pan Asian Special/Dynamite Prawn (8 Pcs).jpg', description: 'Crispy prawns in a spicy dynamite sauce.', baseCalories: 550, availableAddons: ['extraShrimp'] },
-  { id: 'moonFanFriedRiceVeg', name: 'Moon Fan Fried Rice Veg', price: 220, category: 'Pan Asian Special', type: 'veg', spicy: false, img: 'images/Pan Asian Special/Moon Fan Fried Rice Veg.jpg', description: 'A special type of vegetable fried rice.', baseCalories: 380, availableAddons: ['extraPaneer', 'extraVeggies'] },
-  { id: 'nasiGorengRiceChicken', name: 'Nasi Goreng Rice Chicken', price: 300, category: 'Pan Asian Special', type: 'non-veg', spicy: true, img: 'images/Pan Asian Special/Nasi Goreng Rice Chicken.jpg', description: 'Indonesian fried rice with chicken.', baseCalories: 510, availableAddons: ['extraChicken', 'extraFriedEgg'] },
-  // Thai Curry Special
-  { id: 'khowsueyveg', name: 'Khow Suey (Veg)', price: 450, category: 'Thai Curry Special', type: 'veg', spicy: false, img: 'images/Thai Curry Special/Khow Suey (Veg).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 600, availableAddons: ['extraPaneer', 'extraVeggies'] },
-  { id: 'khowsueychicken', name: 'Khow Suey (Chicken)', price: 525, category: 'Thai Curry Special', type: 'non-veg', spicy: false, img: 'images/Thai Curry Special/Khow Suey (Chicken).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 700, availableAddons: ['extraChicken', 'extraBoiledEgg'] },
-  { id: 'khowsueyprawn', name: 'Khow Suey (Prawn)', price: 575, category: 'Thai Curry Special', type: 'seafood', spicy: false, img: 'images/Thai Curry Special/Khow Suey (Prawn).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 680, availableAddons: ['extraShrimp', 'extraBoiledEgg'] },
-  { id: 'greencurrywithsteamriceveg', name: 'Green Curry with Steam Rice (Veg)', price: 340, category: 'Thai Curry Special', type: 'veg', spicy: true, img: 'images/Thai Curry Special/Green Curry with Steam Rice (Veg).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 550, availableAddons: ['extraPaneer', 'extraVeggies'] },
-  { id: 'greencurrywithsteamricechicken', name: 'Green Curry with Steam Rice (Chicken)', price: 410, category: 'Thai Curry Special', type: 'non-veg', spicy: true, img: 'images/Thai Curry Special/Green Curry with Steam Rice (Chicken).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 650, availableAddons: ['extraChicken'] },
-  { id: 'greencurrywithsteamriceprawn', name: 'Green Curry with Steam Rice (Prawn)', price: 475, category: 'Thai Curry Special', type: 'seafood', spicy: true, img: 'images/Thai Curry Special/Green Curry with Steam Rice (Prawn).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 630, availableAddons: ['extraShrimp'] },
-  { id: 'redcurrywithsteamriceveg', name: 'Red Curry with Steam Rice (Veg)', price: 340, category: 'Thai Curry Special', type: 'veg', spicy: true, img: 'images/Thai Curry Special/Red Curry with Steam Rice (Veg).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 550, availableAddons: ['extraPaneer', 'extraVeggies'] },
-  { id: 'redcurrywithsteamricechicken', name: 'Red Curry with Steam Rice (Chicken)', price: 410, category: 'Thai Curry Special', type: 'non-veg', spicy: true, img: 'images/Thai Curry Special/Red Curry with Steam Rice (Chicken).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 650, availableAddons: ['extraChicken'] },
-  { id: 'redcurrywithsteamriceprawn', name: 'Red Curry with Steam Rice (Prawn)', price: 475, category: 'Thai Curry Special', type: 'seafood', spicy: true, img: 'images/Thai Curry Special/Red Curry with Steam Rice (Prawn).jpg', description: 'A delicious Thai Curry Special dish.', baseCalories: 630, availableAddons: ['extraShrimp'] },
-  // Main Course
-  { id: 'chillipaneergravy10pcs', name: 'Chilli Paneer Gravy (10 Pcs)', price: 275, category: 'Main Course', type: 'veg', spicy: true, img: 'images/Main Course Veg/Chilli Paneer Gravy (10 Pcs).jpg', description: 'Paneer in a spicy gravy.', baseCalories: 420, availableAddons: ['extraPaneer'] },
-  { id: 'vegmanchuriangravy8pcs', name: 'Veg Manchurian Gravy (8 Pcs)', price: 280, category: 'Main Course', type: 'veg', spicy: false, img: 'images/Main Course Veg/Veg Manchurian Gravy (8 Pcs).jpg', description: 'Vegetable balls in a savory sauce.', baseCalories: 400, availableAddons: ['extraVeggies'] },
-  { id: 'exoticmixedveginbuttergarlicsauce', name: 'Exotic Mixed Veg in Butter Garlic Sauce', price: 300, category: 'Main Course', type: 'veg', spicy: false, img: 'images/Main Course Veg/Exotic Mixed Veg in Butter Garlic Sauce.jpg', description: 'Assorted vegetables in a creamy butter garlic sauce.', baseCalories: 380, availableAddons: ['butter', 'extraVeggies'] },
-  { id: 'manchurianchicken10pcs', name: 'Manchurian Chicken (10 Pcs)', price: 350, category: 'Main Course', type: 'non-veg', spicy: false, img: 'images/Main Course Chicken/Manchurian Chicken (10 Pcs).jpg', description: 'Chicken in a savory Manchurian sauce.', baseCalories: 520, availableAddons: ['extraChicken'] },
-  { id: 'garlicchicken10pcs', name: 'Garlic Chicken (10 Pcs)', price: 350, category: 'Main Course', type: 'non-veg', spicy: false, img: 'images/Main Course Chicken/Garlic Chicken (10 Pcs).jpg', description: 'Chicken in a rich garlic-infused gravy.', baseCalories: 510, availableAddons: ['extraChicken'] },
-  { id: 'chillichickengravy10pcs', name: 'Chilli Chicken Gravy (10 Pcs)', price: 360, category: 'Main Course', type: 'non-veg', spicy: true, img: 'images/Main Course Chicken/Chilli Chicken Gravy (10 Pcs).jpg', description: 'The classic spicy chicken gravy.', baseCalories: 530, availableAddons: ['extraChicken'] },
-  { id: 'manchurianfish10pcs', name: 'Manchurian Fish (10 Pcs)', price: 370, category: 'Main Course', type: 'seafood', spicy: false, img: 'images/Main Course Seafood/Manchurian Fish (10 Pcs).jpg', description: 'Fish in a savory Manchurian sauce.', baseCalories: 490, availableAddons: [] },
-  { id: 'chilliprawngravy8pcs', name: 'Chilli Prawn Gravy (8 Pcs)', price: 420, category: 'Main Course', type: 'seafood', spicy: true, img: 'images/Main Course Seafood/Chilli Prawn Gravy (8 Pcs).jpg', description: 'Juicy prawns in a spicy chilli gravy.', baseCalories: 520, availableAddons: ['extraShrimp'] },
-  // Noodles
-  { id: 'hakkanoodlesveg', name: 'Hakka Noodles (Veg)', price: 220, category: 'Noodles', type: 'veg', spicy: false, img: 'images/Noodles/Hakka Noodles (Veg).jpg', description: 'Classic stir-fried noodles with vegetables.', baseCalories: 400, availableAddons: ['extraPaneer', 'extraVeggies', 'extraScrambledEgg'] },
-  { id: 'hakkanoodlesegg', name: 'Hakka Noodles (Egg)', price: 240, category: 'Noodles', type: 'egg', spicy: false, img: 'images/Noodles/Hakka Noodles (Egg).jpg', description: 'Classic stir-fried noodles with egg.', baseCalories: 430, availableAddons: ['extraChicken', 'extraVeggies', 'extraScrambledEgg'] },
-  { id: 'hakkanoodleschicken', name: 'Hakka Noodles (Chicken)', price: 255, category: 'Noodles', type: 'non-veg', spicy: false, img: 'images/Noodles/Hakka Noodles (Chicken).jpg', description: 'Classic stir-fried noodles with chicken.', baseCalories: 460, availableAddons: ['extraChicken', 'extraVeggies', 'extraScrambledEgg'] },
-  { id: 'hakkanoodlesmixed', name: 'Hakka Noodles (Mixed)', price: 290, category: 'Noodles', type: 'non-veg', spicy: false, img: 'images/Noodles/Hakka Noodles (Mixed).jpg', description: 'Classic stir-fried noodles with mixed meats.', baseCalories: 500, availableAddons: ['extraChicken', 'extraShrimp', 'extraVeggies'] },
-  { id: 'chilligarlicnoodlesveg', name: 'Chilli Garlic Noodles (Veg)', price: 225, category: 'Noodles', type: 'veg', spicy: true, img: 'images/Noodles/Chilli Garlic Noodles (Veg).jpg', description: 'Noodles tossed in a spicy chilli garlic sauce.', baseCalories: 410, availableAddons: ['extraPaneer', 'extraVeggies'] },
-  { id: 'chilligarlicnoodleschicken', name: 'Chilli Garlic Noodles (Chicken)', price: 250, category: 'Noodles', type: 'non-veg', spicy: true, img: 'images/Noodles/Chilli Garlic Noodles (Chicken).jpg', description: 'Noodles tossed in a spicy chilli garlic sauce with chicken.', baseCalories: 470, availableAddons: ['extraChicken', 'extraVeggies'] },
-  // Rice
-  { id: 'schezwanfriedriceveg', name: 'Schezwan Fried Rice (Veg)', price: 240, category: 'Rice', type: 'veg', spicy: true, img: 'images/Rice/Schezwan Fried Rice (Veg).jpg', description: 'Spicy fried rice tossed in Schezwan sauce.', baseCalories: 430, availableAddons: ['extraPaneer', 'extraVeggies'] },
-  { id: 'schezwanfriedriceegg', name: 'Schezwan Fried Rice (Egg)', price: 260, category: 'Rice', type: 'egg', spicy: true, img: 'images/Rice/Schezwan Fried Rice (Egg).jpg', description: 'Spicy fried rice tossed in Schezwan sauce with egg.', baseCalories: 460, availableAddons: ['extraChicken', 'extraVeggies', 'extraScrambledEgg'] },
-  { id: 'schezwanfriedricemixed', name: 'Schezwan Fried Rice (Mixed)', price: 285, category: 'Rice', type: 'non-veg', spicy: true, img: 'images/Rice/Schezwan Fried Rice (Mixed).jpg', description: 'Spicy fried rice with mixed meats.', baseCalories: 530, availableAddons: ['extraChicken', 'extraShrimp', 'extraVeggies'] },
-  // Dessert
-  { id: 'darsaan', name: 'Darsaan', price: 180, category: 'Dessert', type: 'veg', spicy: false, img: 'images/Dessert/Darsaan.jpg', description: 'Crispy fried flat noodles tossed in honey.', baseCalories: 400, availableAddons: [] },
-  { id: 'darsaanwithicecream', name: 'Darsaan with Ice Cream', price: 225, category: 'Dessert', type: 'veg', spicy: false, img: 'images/Dessert/Darsaan with Ice Cream.jpg', description: 'Crispy honey noodles served with a scoop of ice cream.', baseCalories: 550, availableAddons: [] },
-  { id: 'browniewithicecream', name: 'Brownie with Ice Cream', price: 225, category: 'Dessert', type: 'veg', spicy: false, img: 'images/Dessert/Brownie with Ice Cream.jpg', description: 'Warm chocolate brownie with a scoop of ice cream.', baseCalories: 600, availableAddons: [] },
-  { id: 'blueberrycheesecake', name: 'Blueberry Cheese Cake', price: 180, category: 'Dessert', type: 'veg', spicy: false, img: 'images/Dessert/Blueberry Cheese Cake.jpg', description: 'Creamy cheesecake topped with blueberry compote.', baseCalories: 420, availableAddons: [] },
-  // Beverages
-  { id: 'freshlimesoda', name: 'Fresh Lime Soda', price: 80, category: 'Beverages', type: 'veg', spicy: false, img: 'images/Beverages/Fresh Lime Soda.jpg', description: 'A refreshing sweet and salty drink.', baseCalories: 90, availableAddons: [] },
-  { id: 'masalachai', name: 'Masala Chai', price: 50, category: 'Beverages', type: 'veg', spicy: false, img: 'images/Beverages/Masala Chai.jpg', description: 'Indian spiced tea with milk.', baseCalories: 120, availableAddons: [] },
-  { id: 'lassisweetsalted', name: 'Lassi (Sweet/Salted)', price: 90, category: 'Beverages', type: 'veg', spicy: false, img: 'images/Beverages/Lassi (Sweet_Salted).jpg', description: 'A creamy yogurt-based drink.', baseCalories: 180, availableAddons: [] },
-  // Special Dips
-  { id: 'dipscombo3sauce', name: 'Dips Combo (3 Sauce)', price: 100, category: 'Special Dips', type: 'veg', spicy: true, img: 'images/Special Dips/Dips Combo (3 Sauce).jpg', description: 'A combination of our three special sauces.', baseCalories: 300, availableAddons: [] }
-];
-
+            // Soups
+            {
+              id: 'hotsoursoupveg',
+              name: 'Hot & Sour Soup (Veg)',
+              price: 185,
+              category: 'Soups',
+              type: 'veg',
+              spicy: true,
+              img: 'images/Soups/Hot & Sour Soup (Veg).jpg',
+              description: 'Classic spicy and sour soup with vegetables.',
+              baseCalories: 150,
+              availableAddons: ['extraVeggies']
+            }, {
+              id: 'hotsoursoupchicken',
+              name: 'Hot & Sour Soup (Chicken)',
+              price: 205,
+              category: 'Soups',
+              type: 'non-veg',
+              spicy: true,
+              img: 'images/Soups/Hot & Sour Soup (Chicken).jpg',
+              description: 'Classic spicy and sour soup with chicken.',
+              baseCalories: 180,
+              availableAddons: ['extraChicken']
+            },
+              { id: 'hotsoursoupprawn', name: 'Hot & Sour Soup (Prawn)', price: 225, category: 'Soups', type: 'seafood', spicy: true, img: 'images/Soups/Hot & Sour Soup (Prawn).jpg', description: 'Classic spicy and sour soup with prawns.', baseCalories: 170, availableAddons: ['extraShrimp'] },
+            // Salad
+            {
+              id: 'crispynoodlessaladveg',
+              name: 'Crispy Noodles Salad (Veg)',
+              price: 150,
+              category: 'Salad',
+              type: 'veg',
+              spicy: false,
+              img: 'images/Salad/Crispy Noodles Salad (Veg).jpg',
+              description: 'A crunchy and refreshing salad.',
+              baseCalories: 250,
+              availableAddons: ['extraVeggies']
+            }, {
+              id: 'crispynoodlessaladchicken',
+              name: 'Crispy Noodles Salad (Chicken)',
+              price: 180,
+              category: 'Salad',
+              type: 'non-veg',
+              spicy: false,
+              img: 'images/Salad/Crispy Noodles Salad (Chicken).jpg',
+              description: 'A crunchy and refreshing salad with chicken.',
+              baseCalories: 320,
+              availableAddons: ['extraChicken']
+            },
+            // Appetizers
+            {
+              id: 'crispychillibabycorn',
+              name: 'Crispy Chilli Babycorn',
+              price: 250,
+              category: 'Appetizers',
+              type: 'veg',
+              spicy: true,
+              img: 'images/Appetizer Veg/Crispy Chilli Babycorn.jpg',
+              description: 'Fried babycorn tossed in a spicy sauce.',
+              baseCalories: 320,
+              availableAddons: []
+            }, {
+              id: 'chillicheesestuffmushroom',
+              name: 'Chilli Cheese Stuff Mushroom',
+              price: 250,
+              category: 'Appetizers',
+              type: 'veg',
+              spicy: true,
+              img: 'images/Appetizer Veg/Chilli Cheese Stuff Mushroom.jpg',
+              description: 'Mushrooms stuffed with cheese and spices.',
+              baseCalories: 340,
+              availableAddons: ['extraCheese']
+            },
+            // Momos
+            {
+              id: 'chickenschezwanstylemomo8pcssteam',
+              name: 'Chicken Schezwan Momo (Steam, 8 Pcs)',
+              price: 235,
+              category: 'Momos',
+              type: 'non-veg',
+              spicy: true,
+              img: 'images/Momos/Chicken Schezwan Momo (Steam, 8 Pcs).jpg',
+              description: 'Steamed momos with a spicy chicken filling.',
+              baseCalories: 350,
+              availableAddons: ['extraChicken']
+            }, {
+              id: 'chickenSchezwanStyleMomo8PcsFried',
+              name: 'Chicken Schezwan Momo (Fried, 8 Pcs)',
+              price: 245,
+              category: 'Momos',
+              type: 'non-veg',
+              spicy: true,
+              img: 'images/Momos/Chicken Schezwan Momo (Fried, 8 Pcs).jpg',
+              description: 'Fried momos with a spicy chicken filling.',
+              baseCalories: 450,
+              availableAddons: ['extraChicken']
+            },
+            // Baos
+            {
+              id: 'chickenBarbequeBao3Pcs',
+              name: 'Chicken Barbeque Bao (3 Pcs)',
+              price: 245,
+              category: 'Baos',
+              type: 'non-veg',
+              spicy: false,
+              img: 'images/Baos/Chicken Barbeque Bao (3 Pcs).jpg',
+              description: 'Soft steamed buns with a BBQ chicken filling.',
+              baseCalories: 400,
+              availableAddons: ['extraChicken']
+            }, {
+              id: 'flamingBaoVeg3Pcs',
+              name: 'Flaming Bao Veg (3 Pcs)',
+              price: 225,
+              category: 'Baos',
+              type: 'veg',
+              spicy: true,
+              img: 'images/Baos/Flaming Bao Veg (3 Pcs).jpg',
+              description: 'Soft steamed buns with a spicy vegetable filling.',
+              baseCalories: 350,
+              availableAddons: ['extraPaneer']
+            },
+            // Japanese Bowls
+            {
+              id: 'japaneseRamenBowlVeg',
+              name: 'Japanese Ramen Bowl (Veg)',
+              price: 299,
+              category: 'Japanese Bowls',
+              type: 'veg',
+              spicy: false,
+              img: 'images/Japanese Bowls/Japanese Ramen Bowl (Veg).jpg',
+              description: 'A hearty noodle soup bowl with vegetables.',
+              baseCalories: 450,
+              availableAddons: ['extraPaneer', 'extraVeggies', 'extraBoiledEgg']
+            }, {
+              id: 'japaneseRamenBowlNonVeg',
+              name: 'Japanese Ramen Bowl (Non-Veg)',
+              price: 399,
+              category: 'Japanese Bowls',
+              type: 'non-veg',
+              spicy: false,
+              img: 'images/Japanese Bowls/Japanese Ramen Bowl (Non-Veg).jpg',
+              description: 'A hearty noodle soup bowl with chicken.',
+              baseCalories: 550,
+              availableAddons: ['extraChicken', 'extraVeggies', 'extraBoiledEgg']
+            },
+            // Pan Asian Special
+            {
+              id: 'dragonNoodlesMixed',
+              name: 'Dragon Noodles (Mixed)',
+              price: 300,
+              category: 'Pan Asian Special',
+              type: 'non-veg',
+              spicy: true,
+              img: 'images/Pan Asian Special/Dragon Noodles (Mixed).jpg',
+              description: 'Spicy noodles with mixed meat and vegetables.',
+              baseCalories: 500,
+              availableAddons: ['extraChicken', 'extraShrimp', 'extraVeggies']
+            }, {
+              id: 'stirFriedGarlicGreenBeansWithChicken',
+              name: 'Stir Fried Garlic Green Beans with Chicken',
+              price: 330,
+              category: 'Pan Asian Special',
+              type: 'non-veg',
+              spicy: false,
+              img: 'images/Pan Asian Special/Stir Fried Garlic Green Beans with Chicken.jpg',
+              description: 'A savory stir-fry dish.',
+              baseCalories: 420,
+              availableAddons: ['extraChicken']
+            },
+            // Thai Curry Special
+            {
+              id: 'khowsueyveg',
+              name: 'Khow Suey (Veg)',
+              price: 450,
+              category: 'Thai Curry Special',
+              type: 'veg',
+              spicy: false,
+              img: 'images/Thai Curry Special/Khow Suey (Veg).jpg',
+              description: 'A delicious Thai Curry Special dish.',
+              baseCalories: 600,
+              availableAddons: ['extraPaneer', 'extraVeggies']
+            }, {
+              id: 'khowsueychicken',
+              name: 'Khow Suey (Chicken)',
+              price: 525,
+              category: 'Thai Curry Special',
+              type: 'non-veg',
+              spicy: false,
+              img: 'images/Thai Curry Special/Khow Suey (Chicken).jpg',
+              description: 'A delicious Thai Curry Special dish.',
+              baseCalories: 700,
+              availableAddons: ['extraChicken', 'extraBoiledEgg']
+            },
+            // Main Course
+            {
+              id: 'chillipaneergravy10pcs',
+              name: 'Chilli Paneer Gravy (10 Pcs)',
+              price: 275,
+              category: 'Main Course',
+              type: 'veg',
+              spicy: true,
+              img: 'images/Main Course Veg/Chilli Paneer Gravy (10 Pcs).jpg',
+              description: 'Paneer in a spicy gravy.',
+              baseCalories: 420,
+              availableAddons: ['extraPaneer']
+            }, {
+              id: 'vegmanchuriangravy8pcs',
+              name: 'Veg Manchurian Gravy (8 Pcs)',
+              price: 280,
+              category: 'Main Course',
+              type: 'veg',
+              spicy: false,
+              img: 'images/Main Course Veg/Veg Manchurian Gravy (8 Pcs).jpg',
+              description: 'Vegetable balls in a savory sauce.',
+              baseCalories: 400,
+              availableAddons: ['extraVeggies']
+            },
+            // Noodles
+            {
+              id: 'hakkanoodlesveg',
+              name: 'Hakka Noodles (Veg)',
+              price: 220,
+              category: 'Noodles',
+              type: 'veg',
+              spicy: false,
+              img: 'images/Noodles/Hakka Noodles (Veg).jpg',
+              description: 'Classic stir-fried noodles with vegetables.',
+              baseCalories: 400,
+              availableAddons: ['extraPaneer', 'extraVeggies', 'extraScrambledEgg']
+            }, {
+              id: 'hakkanoodlesegg',
+              name: 'Hakka Noodles (Egg)',
+              price: 240,
+              category: 'Noodles',
+              type: 'egg',
+              spicy: false,
+              img: 'images/Noodles/Hakka Noodles (Egg).jpg',
+              description: 'Classic stir-fried noodles with egg.',
+              baseCalories: 430,
+              availableAddons: ['extraChicken', 'extraVeggies', 'extraScrambledEgg']
+            },
+            // Rice
+            {
+              id: 'schezwanfriedriceveg',
+              name: 'Schezwan Fried Rice (Veg)',
+              price: 240,
+              category: 'Rice',
+              type: 'veg',
+              spicy: true,
+              img: 'images/Rice/Schezwan Fried Rice (Veg).jpg',
+              description: 'Spicy fried rice tossed in Schezwan sauce.',
+              baseCalories: 430,
+              availableAddons: ['extraPaneer', 'extraVeggies']
+            }, {
+              id: 'schezwanfriedriceegg',
+              name: 'Schezwan Fried Rice (Egg)',
+              price: 260,
+              category: 'Rice',
+              type: 'egg',
+              spicy: true,
+              img: 'images/Rice/Schezwan Fried Rice (Egg).jpg',
+              description: 'Spicy fried rice tossed in Schezwan sauce with egg.',
+              baseCalories: 460,
+              availableAddons: ['extraChicken', 'extraVeggies', 'extraScrambledEgg']
+            },
+            // Dessert
+            {
+              id: 'darsaan',
+              name: 'Darsaan',
+              price: 180,
+              category: 'Dessert',
+              type: 'veg',
+              spicy: false,
+              img: 'images/Dessert/Darsaan.jpg',
+              description: 'Crispy fried flat noodles tossed in honey.',
+              baseCalories: 400,
+              availableAddons: []
+            }, {
+              id: 'darsaanwithicecream',
+              name: 'Darsaan with Ice Cream',
+              price: 225,
+              category: 'Dessert',
+              type: 'veg',
+              spicy: false,
+              img: 'images/Dessert/Darsaan with Ice Cream.jpg',
+              description: 'Crispy honey noodles served with a scoop of ice cream.',
+              baseCalories: 550,
+              availableAddons: []
+            },
+            // Beverages
+            {
+              id: 'freshlimesoda',
+              name: 'Fresh Lime Soda',
+              price: 80,
+              category: 'Beverages',
+              type: 'veg',
+              spicy: false,
+              img: 'images/Beverages/Fresh Lime Soda.jpg',
+              description: 'A refreshing sweet and salty drink.',
+              baseCalories: 90,
+              availableAddons: []
+            }, {
+              id: 'masalachai',
+              name: 'Masala Chai',
+              price: 50,
+              category: 'Beverages',
+              type: 'veg',
+              spicy: false,
+              img: 'images/Beverages/Masala Chai.jpg',
+              description: 'Indian spiced tea with milk.',
+              baseCalories: 120,
+              availableAddons: []
+            },
+            // Special Dips
+            {
+              id: 'dipscombo3sauce',
+              name: 'Dips Combo (3 Sauce)',
+              price: 100,
+              category: 'Special Dips',
+              type: 'veg',
+              spicy: true,
+              img: 'images/Special Dips/Dips Combo (3 Sauce).jpg',
+              description: 'A combination of our three special sauces.',
+              baseCalories: 300,
+              availableAddons: []
+            }
+          ];
           // --- CONFIGURABLE CONSTANTS ---
           const PACKING_CHARGE = 20;
           const AVG_ADULT_DAILY_CALORIES = 2000;
@@ -1291,6 +1631,7 @@
           let orders = JSON.parse(localStorage.getItem('spiceGardenOrders')) || [];
           let isViewMode = false;
           let currentOrder = [];
+          let isHappyHour = false;
           // --- DOM ELEMENT REFERENCES ---
           const menuGrid = document.getElementById('menu-grid');
           const categoryNav = document.querySelector('.category-nav');
@@ -1299,60 +1640,57 @@
           const addonList = document.getElementById('addon-list');
           const recentOrdersList = document.getElementById('recent-orders-list');
           const totalItemsCount = document.getElementById('total-items-count');
+          const happyHourToggle = document.getElementById('happy-hour-toggle');
           // --- DYNAMIC CONTENT RENDERING ---
           function renderMenu() {
             menuGrid.innerHTML = '';
             const categories = {};
             const categoryOrder = ["Soups", "Salad", "Appetizers", "Momos", "Baos", "Japanese Bowls", "Pan Asian Special", "Thai Curry Special", "Main Course", "Rice", "Noodles", "Dessert", "Special Dips", "Beverages"];
-
             categoryOrder.forEach(catName => {
-                const items = menuData.filter(item => item.category === catName);
-                if (items.length > 0) {
-                    categories[catName] = items;
-                }
+              const items = menuData.filter(item => item.category === catName);
+              if (items.length > 0) {
+                categories[catName] = items;
+              }
             });
-
             for (const categoryName of categoryOrder) {
-                if (!categories[categoryName]) continue;
-
-                const categoryId = categoryName.toLowerCase().replace(/[^a-zA-Z0-9]/g, '-');
-                const categoryTitle = document.createElement('div');
-                categoryTitle.className = 'category-title';
-                categoryTitle.dataset.category = categoryId;
-
-                const hasVeg = categories[categoryName].some(i => i.type === 'veg');
-                const hasNonVeg = categories[categoryName].some(i => ['non-veg', 'seafood', 'egg'].includes(i.type));
-                const hasEgg = categories[categoryName].some(i => i.type === 'egg');
-                const hasSeafood = categories[categoryName].some(i => i.type === 'seafood');
-                const hasSpicy = categories[categoryName].some(i => i.spicy);
-
-                let filtersHTML = `
+              if (!categories[categoryName]) continue;
+              const categoryId = categoryName.toLowerCase().replace(/[^a-zA-Z0-9]/g, '-');
+              const categoryTitle = document.createElement('div');
+              categoryTitle.className = 'category-title';
+              categoryTitle.dataset.category = categoryId;
+              const hasVeg = categories[categoryName].some(i => i.type === 'veg');
+              const hasNonVeg = categories[categoryName].some(i => ['non-veg', 'seafood', 'egg'].includes(i.type));
+              const hasEgg = categories[categoryName].some(i => i.type === 'egg');
+              const hasSeafood = categories[categoryName].some(i => i.type === 'seafood');
+              const hasSpicy = categories[categoryName].some(i => i.spicy);
+              let filtersHTML = `
                     <button class="sub-filter-btn active" data-filter="all" title="Show All"><i class="fas fa-list"></i></button>
-                    ${hasVeg ? '<button class="sub-filter-btn" data-filter="veg" title="Veg"><span class="veg-icon"></span></button>' : ''}
-                    ${hasNonVeg ? '<button class="sub-filter-btn" data-filter="non-veg" title="Non-Veg"><span class="non-veg-icon"></span></button>' : ''}
-                    ${hasEgg ? '<button class="sub-filter-btn" data-filter="egg" title="Egg"><span class="egg-icon"></span></button>' : ''}
-                    ${hasSeafood ? '<button class="sub-filter-btn" data-filter="seafood" title="Seafood"><span class="seafood-icon"></span></button>' : ''}
+                    ${hasVeg ? `<button class="sub-filter-btn" data-filter="veg" title="Veg"><img src="${iconDataUris.veg}" class="veg-icon" alt="Veg"></button>` : ''}
+                    ${hasNonVeg ? `<button class="sub-filter-btn" data-filter="non-veg" title="Non-Veg"><img src="${iconDataUris['non-veg']}" class="non-veg-icon" alt="Non-Veg"></button>` : ''}
+                    ${hasEgg ? `<button class="sub-filter-btn" data-filter="egg" title="Egg"><img src="${iconDataUris.egg}" class="egg-icon" alt="Egg"></button>` : ''}
+                    ${hasSeafood ? `<button class="sub-filter-btn" data-filter="seafood" title="Seafood"><img src="${iconDataUris.seafood}" class="seafood-icon" alt="Seafood"></button>` : ''}
                     ${hasSpicy ? '<button class="sub-filter-btn" data-filter="spicy" title="Spicy"><i class="fas fa-pepper-hot spicy-icon"></i></button>' : ''}
                 `;
-
-                categoryTitle.innerHTML = `
+              categoryTitle.innerHTML = `
                     <span><i class="fas fa-utensils"></i> ${categoryName}</span>
                     <div class="category-filters">${filtersHTML}</div>
                 `;
-                menuGrid.appendChild(categoryTitle);
-                
-                categories[categoryName].forEach(item => {
-                    const menuItemElement = document.createElement('div');
-                    menuItemElement.className = 'menu-item';
-                    menuItemElement.dataset.category = categoryId;
-                    menuItemElement.dataset.itemId = item.id;
-                    menuItemElement.dataset.type = item.type;
-                    menuItemElement.dataset.spicy = item.spicy;
-
-                    const typeIcon = `<span class="${item.type}-icon"></span>`;
-                    const spicyIcon = item.spicy ? '<i class="fas fa-pepper-hot spicy-icon"></i>' : '';
-
-                    menuItemElement.innerHTML = `
+              menuGrid.appendChild(categoryTitle);
+              categories[categoryName].forEach(item => {
+                const menuItemElement = document.createElement('div');
+                menuItemElement.className = 'menu-item';
+                menuItemElement.dataset.category = categoryId;
+                menuItemElement.dataset.itemId = item.id;
+                menuItemElement.dataset.type = item.type;
+                menuItemElement.dataset.spicy = item.spicy;
+                const typeIcon = `<img src="${iconDataUris[item.type]}" alt="${item.type}" class="${item.type}-icon">`;
+                const spicyIcon = item.spicy ? '<i class="fas fa-pepper-hot spicy-icon"></i>' : '';
+                const displayPrice = isHappyHour ? (item.price * 0.8) : item.price;
+                const priceHTML = isHappyHour ? `<div class="menu-item-price">
+                             <span style="color: var(--success); font-weight: 700;">₹${displayPrice.toFixed(0)}</span> 
+                             <del style="color: #999; font-size: 0.8em; margin-left: 8px;">₹${item.price}</del>
+                           </div>` : `<div class="menu-item-price">₹${item.price}</div>`;
+                menuItemElement.innerHTML = `
                         <div class="item-quantity-badge" data-item-id="${item.id}" title="Click to edit quantity">0</div>
                         <img src="${item.img}" alt="${item.name}" class="menu-item-image">
                         <div class="menu-item-details">
@@ -1361,7 +1699,7 @@
                                 <span>${item.name}</span>
                                 ${spicyIcon}
                             </div>
-                            <div class="menu-item-price">₹${item.price}</div>
+                            ${priceHTML}
                             <div class="menu-item-info">
                                 <div class="info-description">${item.description}</div>
                                 <div class="info-calories">Approx. ${item.baseCalories} kcal</div>
@@ -1370,10 +1708,11 @@
                                 <button class="quantity-btn add-item" data-item-id="${item.id}">+</button>
                             </div>
                         </div>`;
-                    menuGrid.appendChild(menuItemElement);
-                });
+                menuGrid.appendChild(menuItemElement);
+              });
             }
           }
+
           function renderCategoryNav() {
             const categoryOrder = ["Soups", "Salad", "Appetizers", "Momos", "Baos", "Japanese Bowls", "Pan Asian Special", "Thai Curry Special", "Main Course", "Rice", "Noodles", "Dessert", "Special Dips", "Beverages"];
             categoryNav.innerHTML = '';
@@ -1393,11 +1732,11 @@
             document.getElementById('addon-modal-title').textContent = `Add Extras for ${item.name}`;
             addonList.innerHTML = '';
             if (item.availableAddons.length === 0) {
-                 addonList.innerHTML = '<div>No add-ons available for this item.</div>';
+              addonList.innerHTML = '<div>No add-ons available for this item.</div>';
             } else {
-                item.availableAddons.forEach(addonKey => {
-                    const addon = addOnsData[addonKey];
-                    addonList.innerHTML += `
+              item.availableAddons.forEach(addonKey => {
+                const addon = addOnsData[addonKey];
+                addonList.innerHTML += `
                         <div class="addon-item">
                             <input type="checkbox" id="${addonKey}" name="addon" value="${addonKey}">
                             <label for="${addonKey}">
@@ -1407,20 +1746,23 @@
                                 </div>
                             </label>
                         </div>`;
-                });
+              });
             }
             addonModal.dataset.itemId = item.id;
             addonModal.style.display = 'flex';
           }
+
           function closeAddonModal() {
             addonModal.style.display = 'none';
           }
+
           function handleConfirmAddon() {
             const item = menuData.find(i => i.id === addonModal.dataset.itemId);
             const selectedAddons = Array.from(document.querySelectorAll('#addon-list input:checked')).map(cb => cb.value);
             addItemToOrder(item, selectedAddons);
             closeAddonModal();
           }
+
           function handleAddNote(orderItemId) {
             const itemIndex = currentOrder.findIndex(item => item.id === orderItemId);
             if (itemIndex === -1) return;
@@ -1458,6 +1800,7 @@
             }
             updateOrderSummary();
           }
+
           function updateItemQuantity(orderItemId, action) {
             const itemIndex = currentOrder.findIndex(item => item.id === orderItemId);
             if (itemIndex === -1) return;
@@ -1466,6 +1809,7 @@
             if (currentOrder[itemIndex].quantity <= 0) currentOrder.splice(itemIndex, 1);
             updateOrderSummary();
           }
+
           function setItemQuantity(itemId, newQuantity) {
             let foundItemWithoutAddonsOrNote = false;
             for (let item of currentOrder) {
@@ -1482,24 +1826,29 @@
             currentOrder = currentOrder.filter(item => item.quantity > 0);
             updateOrderSummary();
           }
+
           function updateOrderSummary() {
             orderItemsElement.innerHTML = '';
             let subtotal = 0;
+            let originalSubtotal = 0;
             let totalItems = 0;
+            let happyHourDiscount = 0;
             if (currentOrder.length === 0) {
               orderItemsElement.innerHTML = '<div class="empty-order">No items added yet</div>';
             } else {
               currentOrder.forEach(orderItem => {
                 totalItems += orderItem.quantity;
                 const addonsPrice = orderItem.addOns.reduce((sum, addon) => sum + addon.price, 0);
-                const itemTotalPrice = (orderItem.price + addonsPrice) * orderItem.quantity;
-                subtotal += itemTotalPrice;
-                
-                const typeIcon = `<span class="${orderItem.type}-icon"></span>`;
+                const baseItemPrice = orderItem.price; // Original price
+                const currentItemPrice = isHappyHour ? baseItemPrice * 0.8 : baseItemPrice;
+                const itemOriginalTotalPrice = (baseItemPrice + addonsPrice) * orderItem.quantity;
+                const itemCurrentTotalPrice = (currentItemPrice + addonsPrice) * orderItem.quantity;
+                originalSubtotal += itemOriginalTotalPrice;
+                subtotal += itemCurrentTotalPrice;
+                const typeIcon = `<img src="${iconDataUris[orderItem.type]}" alt="${orderItem.type}" class="${orderItem.type}-icon">`;
                 const spicyIcon = orderItem.spicy ? '<i class="fas fa-pepper-hot spicy-icon"></i>' : '';
                 const addonNames = orderItem.addOns.map(a => a.name).join(', ');
                 let noteHtml = orderItem.note ? `<div class="item-note-container"><i class="fas fa-comment-dots"></i> Note: ${orderItem.note}</div>` : '';
-                
                 orderItemsElement.innerHTML += `
                     <div class="order-item-container">
                         <div class="order-item-main">
@@ -1518,13 +1867,18 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="order-item-price">₹${itemTotalPrice.toFixed(2)}</div>
+                            <div class="order-item-price">₹${itemCurrentTotalPrice.toFixed(2)}</div>
                         </div>
                         ${orderItem.addOns.length > 0 ? `<div class="order-item-addons">+ ${addonNames}</div>` : ''}
                         ${noteHtml}
                     </div>`;
               });
             }
+            if (isHappyHour) {
+              happyHourDiscount = originalSubtotal - subtotal;
+            }
+            document.getElementById('happy-hour-row').style.display = happyHourDiscount > 0 ? 'flex' : 'none';
+            document.getElementById('happy-hour-discount').textContent = `-₹${happyHourDiscount.toFixed(2)}`;
             totalItemsCount.textContent = `Total Items: ${totalItems}`;
             document.querySelectorAll('.item-quantity-badge').forEach(badge => {
               const itemId = badge.dataset.itemId;
@@ -1545,6 +1899,9 @@
             let packingCharge = (document.querySelector('[data-option="takeaway"]').classList.contains('active') && subtotal > 0) ? PACKING_CHARGE : 0;
             const baseForConvenienceFee = subtotalAfterDiscount + handlingFee + ecoSaverCharge + packingCharge;
             let convenienceFee = (document.querySelector('[data-payment="upi"]').classList.contains('active')) ? baseForConvenienceFee * CONVENIENCE_FEE_PERCENT : 0;
+            if (isHappyHour) {
+              convenienceFee = 0;
+            }
             const taxableAmount = subtotal - discount + packingCharge;
             const cgst = taxableAmount * 0.025;
             const sgst = taxableAmount * 0.025;
@@ -1584,7 +1941,21 @@
             const now = new Date();
             const billNumber = `BILL-${now.getDate().toString().padStart(2, '0')}${(now.getMonth()+1).toString().padStart(2, '0')}${now.getFullYear()}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
             const billDate = now.toISOString();
-            let subtotal = currentOrder.reduce((sum, item) => sum + (item.price + item.addOns.reduce((s, a) => s + a.price, 0)) * item.quantity, 0);
+            let subtotal = 0;
+            let originalSubtotal = 0;
+            let happyHourDiscount = 0;
+            currentOrder.forEach(orderItem => {
+              const addonsPrice = orderItem.addOns.reduce((sum, addon) => sum + addon.price, 0);
+              const baseItemPrice = orderItem.price;
+              const currentItemPrice = isHappyHour ? baseItemPrice * 0.8 : baseItemPrice;
+              const itemOriginalTotalPrice = (baseItemPrice + addonsPrice) * orderItem.quantity;
+              const itemCurrentTotalPrice = (currentItemPrice + addonsPrice) * orderItem.quantity;
+              originalSubtotal += itemOriginalTotalPrice;
+              subtotal += itemCurrentTotalPrice;
+            });
+            if (isHappyHour) {
+              happyHourDiscount = originalSubtotal - subtotal;
+            }
             const totalCalories = currentOrder.reduce((sum, item) => sum + (item.baseCalories + item.addOns.reduce((s, a) => s + a.calories, 0)) * item.quantity, 0);
             const discountType = document.getElementById('discount-type-amount').classList.contains('active') ? 'amount' : 'percent';
             const discountValue = parseFloat(document.getElementById('discount-value').value) || 0;
@@ -1595,6 +1966,9 @@
             let packingCharge = (document.querySelector('[data-option="takeaway"]').classList.contains('active') && subtotal > 0) ? PACKING_CHARGE : 0;
             const baseForConvenienceFee = subtotalAfterDiscount + handlingFee + ecoSaverCharge + packingCharge;
             let convenienceFee = (document.querySelector('[data-payment="upi"]').classList.contains('active')) ? baseForConvenienceFee * CONVENIENCE_FEE_PERCENT : 0;
+            if (isHappyHour) {
+              convenienceFee = 0;
+            }
             const taxableAmount = subtotal - discount + packingCharge;
             const cgst = taxableAmount * 0.025;
             const sgst = taxableAmount * 0.025;
@@ -1609,6 +1983,7 @@
               date: billDate,
               order: JSON.parse(JSON.stringify(currentOrder)),
               subtotal,
+              happyHourDiscount,
               discount,
               discountType,
               discountValue,
@@ -1624,6 +1999,7 @@
               totalCalories
             };
           }
+
           function populateBill(billData) {
             document.getElementById('bill-number').textContent = billData.billNumber;
             const orderDate = new Date(billData.date);
@@ -1642,11 +2018,12 @@
             if (Array.isArray(billData.order)) {
               billData.order.forEach(item => {
                 const addonsPrice = (item.addOns || []).reduce((sum, addon) => sum + addon.price, 0);
-                const itemTotal = (item.price + addonsPrice) * item.quantity;
-                const typeIcon = `<span class="${item.type}-icon"></span>`;
+                const baseItemPrice = item.price;
+                const currentItemPrice = billData.happyHourDiscount > 0 ? baseItemPrice * 0.8 : baseItemPrice;
+                const itemTotal = (currentItemPrice + addonsPrice) * item.quantity;
+                const typeIcon = `<img src="${iconDataUris[item.type]}" alt="${item.type}" class="${item.type}-icon">`;
                 const spicyIcon = item.spicy ? '<i class="fas fa-pepper-hot spicy-icon"></i>' : '';
-
-                billItemsList.innerHTML += `<tr><td>${typeIcon} ${item.name} ${spicyIcon}</td><td>${item.quantity}</td><td>₹${(item.price + addonsPrice).toFixed(2)}</td><td>₹${itemTotal.toFixed(2)}</td></tr>`;
+                billItemsList.innerHTML += `<tr><td>${typeIcon} ${item.name} ${spicyIcon}</td><td>${item.quantity}</td><td>₹${(currentItemPrice + addonsPrice).toFixed(2)}</td><td>₹${itemTotal.toFixed(2)}</td></tr>`;
                 if (item.addOns && item.addOns.length > 0) {
                   item.addOns.forEach(addon => {
                     billItemsList.innerHTML += `<tr class="addon-row"><td colspan="4">+ ${addon.name}</td></tr>`;
@@ -1665,6 +2042,12 @@
               roundOffDisplay = `₹${billData.roundOffValue.toFixed(2)}`;
             }
             let summaryHtml = `<div class="summary-row"><span class="summary-label">Subtotal:</span><span class="summary-value">₹${billData.subtotal.toFixed(2)}</span></div>`;
+            if (billData.happyHourDiscount > 0) {
+              summaryHtml += `<div class="summary-row">
+                          <span class="summary-label" style="color: var(--success); font-weight: 700;">Happy Hour Savings:</span>
+                          <span class="summary-value" style="color: var(--success); font-weight: 700;">-₹${billData.happyHourDiscount.toFixed(2)}</span>
+                        </div>`;
+            }
             if (billData.discount > 0) summaryHtml += `<div class="summary-row"><span class="summary-label">${discountLabelText}:</span><span class="summary-value">-₹${billData.discount.toFixed(2)}</span></div>`;
             if (billData.packingCharge > 0) summaryHtml += `<div class="summary-row"><span class="summary-label">Packing Charge:</span><span class="summary-value">₹${billData.packingCharge.toFixed(2)}</span></div>`;
             if (billData.handlingFee > 0) summaryHtml += `<div class="summary-row"><span class="summary-label">Handling Fee:</span><span class="summary-value">₹${billData.handlingFee.toFixed(2)}</span></div>`;
@@ -1682,12 +2065,10 @@
             nutritionNote.innerHTML = `<i class="fas fa-leaf"></i> This meal provides the daily energy needs for ~${numPeople} adult(s).`;
             calorieInfoBox.style.display = billData.totalCalories > 0 ? 'block' : 'none';
             nutritionNote.style.display = billData.totalCalories > 0 ? 'block' : 'none';
-            
             document.getElementById('packing-charge-explanation').style.display = billData.packingCharge > 0 ? 'block' : 'none';
             document.getElementById('handling-fee-explanation').style.display = billData.handlingFee > 0 ? 'block' : 'none';
             document.getElementById('eco-saver-explanation').style.display = billData.ecoSaverCharge > 0 ? 'block' : 'none';
             document.getElementById('convenience-fee-explanation').style.display = billData.convenienceFee > 0 ? 'block' : 'none';
-
             const cashDetails = document.getElementById('cash-payment-details');
             const upiDetails = document.getElementById('upi-payment-details');
             if (billData.paymentMethod === 'Cash') {
@@ -1700,6 +2081,7 @@
               document.getElementById('bill-qr-code').src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiString)}`;
             }
           }
+
           function resetOrder() {
             currentOrder = [];
             document.getElementById('discount-value').value = '';
@@ -1708,6 +2090,7 @@
             updateOrderSummary();
             document.getElementById('bill-modal').style.display = 'none';
           }
+
           function generateBill() {
             if (currentOrder.length === 0) {
               alert("Cannot generate an empty bill.");
@@ -1720,6 +2103,7 @@
             document.getElementById('bill-modal').style.display = 'flex';
             return billData;
           }
+
           function loadRecentOrders() {
             recentOrdersList.innerHTML = '';
             if (orders.length === 0) {
@@ -1749,12 +2133,11 @@
               if (Array.isArray(order.order)) {
                 order.order.forEach(item => {
                   const addonsPrice = (item.addOns || []).reduce((sum, addon) => sum + addon.price, 0);
-                  orderItemsHtml += `<div class="order-card-item"><span>${item.name} x${item.quantity}</span><span>₹${((item.price + addonsPrice) * item.quantity).toFixed(2)}</span></div>`;
+                  const baseItemPrice = item.price;
+                  // Check if happy hour was active for this historic order
+                  const currentItemPrice = order.happyHourDiscount > 0 ? baseItemPrice * 0.8 : baseItemPrice;
+                  orderItemsHtml += `<div class="order-card-item"><span>${item.name} x${item.quantity}</span><span>₹${((currentItemPrice + addonsPrice) * item.quantity).toFixed(2)}</span></div>`;
                 });
-              } else {
-                for (const [item, details] of Object.entries(order.order)) {
-                  orderItemsHtml += `<div class="order-card-item"><span>${item} x${details.quantity}</span><span>₹${(details.quantity * details.price).toFixed(2)}</span></div>`;
-                }
               }
               const orderCard = document.createElement('div');
               orderCard.className = 'order-card';
@@ -1764,6 +2147,7 @@
             });
             updateSelectionButtons();
           }
+
           function viewOrder(index) {
             isViewMode = true;
             populateBill(orders[index]);
@@ -1772,6 +2156,11 @@
           }
           // --- EVENT LISTENERS ---
           function initializeEventListeners() {
+            happyHourToggle.addEventListener('change', function() {
+              isHappyHour = this.checked;
+              renderMenu();
+              updateOrderSummary();
+            });
             const tabs = document.querySelectorAll('.tab');
             tabs.forEach(tab => {
               tab.addEventListener('click', () => {
@@ -1790,46 +2179,41 @@
                 const categoryId = e.target.dataset.category;
                 document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
                 e.target.classList.add('active');
-
                 document.querySelectorAll('.sub-filter-btn.active').forEach(btn => btn.classList.remove('active'));
                 document.querySelectorAll('.sub-filter-btn[data-filter="all"]').forEach(btn => btn.classList.add('active'));
-
-                if(categoryId === 'all-items') {
-                   document.querySelectorAll('.category-title, .menu-item').forEach(el => el.style.display = 'flex');
+                if (categoryId === 'all-items') {
+                  document.querySelectorAll('.category-title, .menu-item').forEach(el => el.style.display = 'flex');
                 } else {
-                    document.querySelectorAll('.category-title, .menu-item').forEach(el => {
-                        el.style.display = (el.dataset.category === categoryId) ? 'flex' : 'none';
-                    });
+                  document.querySelectorAll('.category-title, .menu-item').forEach(el => {
+                    el.style.display = (el.dataset.category === categoryId) ? 'flex' : 'none';
+                  });
                 }
               }
             });
             menuGrid.addEventListener('click', (e) => {
               const filterBtn = e.target.closest('.sub-filter-btn');
               if (filterBtn) {
-                  const filter = filterBtn.dataset.filter;
-                  const categoryTitle = filterBtn.closest('.category-title');
-                  const categoryId = categoryTitle.dataset.category;
-
-                  categoryTitle.querySelectorAll('.sub-filter-btn').forEach(btn => btn.classList.remove('active'));
-                  filterBtn.classList.add('active');
-
-                  const itemsInCategory = document.querySelectorAll(`.menu-item[data-category="${categoryId}"]`);
-                  itemsInCategory.forEach(item => {
-                      let show = false;
-                      if (filter === 'all') {
-                          show = true;
-                      } else if (filter === 'spicy') {
-                          if (item.dataset.spicy === 'true') show = true;
-                      } else if (filter === 'non-veg') {
-                          const type = item.dataset.type;
-                          if (type === 'non-veg' || type === 'seafood' || type === 'egg') show = true;
-                      } else {
-                          if (item.dataset.type === filter) show = true;
-                      }
-                      item.style.display = show ? 'flex' : 'none';
-                  });
+                const filter = filterBtn.dataset.filter;
+                const categoryTitle = filterBtn.closest('.category-title');
+                const categoryId = categoryTitle.dataset.category;
+                categoryTitle.querySelectorAll('.sub-filter-btn').forEach(btn => btn.classList.remove('active'));
+                filterBtn.classList.add('active');
+                const itemsInCategory = document.querySelectorAll(`.menu-item[data-category="${categoryId}"]`);
+                itemsInCategory.forEach(item => {
+                  let show = false;
+                  if (filter === 'all') {
+                    show = true;
+                  } else if (filter === 'spicy') {
+                    if (item.dataset.spicy === 'true') show = true;
+                  } else if (filter === 'non-veg') {
+                    const type = item.dataset.type;
+                    if (type === 'non-veg' || type === 'seafood' || type === 'egg') show = true;
+                  } else {
+                    if (item.dataset.type === filter) show = true;
+                  }
+                  item.style.display = show ? 'flex' : 'none';
+                });
               }
-
               const addButton = e.target.closest('.add-item');
               if (addButton) {
                 const item = menuData.find(i => i.id === addButton.dataset.itemId);
@@ -1912,6 +2296,8 @@
               saveOrder(billData);
               populateBill(billData);
               const billContent = document.getElementById('bill-content');
+              const billActions = document.getElementById('bill-modal-actions');
+              billActions.style.display = 'none'; // Hide buttons before capture
               const originalStyles = {
                 maxHeight: billContent.style.maxHeight,
                 overflowY: billContent.style.overflowY
@@ -1925,6 +2311,7 @@
                 height: billContent.scrollHeight,
                 scale: 3
               }).then(canvas => {
+                billActions.style.display = 'flex'; // Show buttons again
                 billContent.style.maxHeight = originalStyles.maxHeight;
                 billContent.style.overflowY = originalStyles.overflowY;
                 const link = document.createElement('a');
@@ -2051,15 +2438,19 @@
             });
             document.getElementById('new-order').addEventListener('click', resetOrder);
           }
+
           function saveOrder(orderData) {
             orders.unshift(orderData);
             localStorage.setItem('spiceGardenOrders', JSON.stringify(orders));
           }
+
           function resendOrder(index) {
             const order = orders[index];
             populateBill(order);
             const billModal = document.getElementById('bill-modal');
             const billContent = document.getElementById('bill-content');
+            const billActions = document.getElementById('bill-modal-actions');
+            billActions.style.display = 'none'; // Hide buttons before capture
             billModal.style.display = 'flex';
             const originalStyles = {
               maxHeight: billContent.style.maxHeight,
@@ -2074,6 +2465,7 @@
               height: billContent.scrollHeight,
               scale: 3
             }).then(canvas => {
+              billActions.style.display = 'flex'; // Show buttons again
               billModal.style.display = 'none';
               billContent.style.maxHeight = originalStyles.maxHeight;
               billContent.style.overflowY = originalStyles.overflowY;
@@ -2099,6 +2491,7 @@
               }
             });
           }
+
           function updateSelectionButtons() {
             const allCheckboxes = document.querySelectorAll('.order-checkbox');
             const allChecked = allCheckboxes.length > 0 && Array.from(allCheckboxes).every(checkbox => checkbox.checked);
@@ -2110,6 +2503,7 @@
               button.innerHTML = allDayChecked ? '<i class="fas fa-times-circle"></i> Deselect Day' : '<i class="fas fa-check-square"></i> Select Day';
             });
           }
+
           function exportOrders(ordersToExport) {
             const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(ordersToExport, null, 2));
             const linkElement = document.createElement('a');
@@ -2117,21 +2511,20 @@
             linkElement.setAttribute('download', `spice-garden-orders-${new Date().toISOString().slice(0,10)}.json`);
             linkElement.click();
           }
+
           function exportToCSV(ordersToExport) {
             if (ordersToExport.length === 0) {
               alert('No orders to export');
               return;
             }
-            let csvContent = "Bill Number,Date,Customer Name,Phone,Table,Items,Subtotal,Discount Amount,Discount Info,Packing Charge,Handling Fee,Eco Charge,Convenience Fee,CGST,SGST,Round Off,Net Total,Payment Method\n";
+            let csvContent = "Bill Number,Date,Customer Name,Phone,Table,Items,Subtotal,Happy Hour Savings,Discount Amount,Discount Info,Packing Charge,Handling Fee,Eco Charge,Convenience Fee,CGST,SGST,Round Off,Net Total,Payment Method\n";
             ordersToExport.forEach(order => {
               let items = '';
               if (Array.isArray(order.order)) {
                 items = order.order.map(item => `${item.name} (x${item.quantity})${(item.addOns && item.addOns.length > 0) ? ' [' + item.addOns.map(a=>a.name).join(', ') + ']' : ''}${item.note ? ' (Note: ' + item.note + ')' : ''}`).join('; ');
-              } else {
-                items = Object.entries(order.order).map(([name, details]) => `${name} (x${details.quantity})`).join('; ');
               }
               const discountInfo = (order.discount > 0) ? ((order.discountType === 'percent') ? `${order.discountValue}%` : `₹${order.discountValue}`) : 'N/A';
-              const row = [order.billNumber, new Date(order.date).toLocaleDateString('en-IN'), `"${order.customerName}"`, order.customerPhone, order.table, `"${items}"`, order.subtotal.toFixed(2), (order.discount > 0 ? `-${order.discount.toFixed(2)}` : '0.00'), discountInfo, (order.packingCharge || 0).toFixed(2), (order.handlingFee || 0).toFixed(2), (order.ecoSaverCharge || 0).toFixed(2), (order.convenienceFee || 0).toFixed(2), order.cgst.toFixed(2), order.sgst.toFixed(2), (order.roundOffValue || 0).toFixed(2), order.netTotal.toFixed(2), order.paymentMethod].join(',');
+              const row = [order.billNumber, new Date(order.date).toLocaleDateString('en-IN'), `"${order.customerName}"`, order.customerPhone, order.table, `"${items}"`, order.subtotal.toFixed(2), (order.happyHourDiscount || 0).toFixed(2), (order.discount > 0 ? `-${order.discount.toFixed(2)}` : '0.00'), discountInfo, (order.packingCharge || 0).toFixed(2), (order.handlingFee || 0).toFixed(2), (order.ecoSaverCharge || 0).toFixed(2), (order.convenienceFee || 0).toFixed(2), order.cgst.toFixed(2), order.sgst.toFixed(2), (order.roundOffValue || 0).toFixed(2), order.netTotal.toFixed(2), order.paymentMethod].join(',');
               csvContent += row + '\n';
             });
             const encodedUri = encodeURI('data:text/csv;charset=utf-8,' + csvContent);
@@ -2139,6 +2532,7 @@
             link.setAttribute('href', encodedUri);
             link.setAttribute('download', `spice-garden-orders-${new Date().toISOString().slice(0,10)}.csv`);
             document.body.appendChild(link);
+            link.click();
             document.body.removeChild(link);
           }
           // --- APP INITIALIZATION ---
