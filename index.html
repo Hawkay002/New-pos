@@ -545,9 +545,6 @@ input:checked+.slider:before {
 .btn-warning {
   background-color: var(--warning);
   color: var(--dark);
-  flex: 1;
-  min-width: 120px;
-  max-width: 160px;
 }
 
 .btn-warning:hover {
@@ -561,6 +558,14 @@ input:checked+.slider:before {
 
 .btn-whatsapp:hover {
   background-color: #128C7E;
+}
+
+.btn-dark {
+  background-color: var(--dark);
+  color: white;
+}
+.btn-dark:hover {
+  background-color: #4a5255;
 }
 
 .form-group {
@@ -695,7 +700,7 @@ input:checked+.slider:before {
 
 .bill-container {
   width: 100%;
-  max-width: 490px;
+  max-width: 400px !important;
   margin: 0 auto;
 }
 
@@ -950,6 +955,7 @@ input:checked+.slider:before {
   display: flex;
   gap: 10px;
   margin-top: 15px;
+  flex-wrap: wrap; /* Allow buttons to wrap */
 }
 
 .recent-orders-actions {
@@ -1381,7 +1387,7 @@ footer {
         <div>ধন্যবাদ! ● धन्यवाद! ● Thank you!</div>
         <div>｡ﾟ•┈୨♡୧┈• ｡ﾟ｡ﾟ•┈୨♡୧┈• ｡ﾟ</div>
         <div>দয়া করে আবার আসবেন! ● कृपया फिर आइएगा! ● Please come again!</div>
-        <div>╚═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╝</div>
+        <div>╚═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╝</div>
       </div>
       <div class="bill-fee-explanations" id="bill-fee-explanations">
         <div class="fee-explanation-item" id="packing-charge-explanation" style="display: none;">
@@ -1402,14 +1408,17 @@ footer {
       </div>
     </div>
     <div class="bill-actions" id="bill-modal-actions">
-      <button class="btn btn-primary" id="close-bill" style="flex: 1; min-width: 10px; max-width: 100%;">
+      <button class="btn btn-primary" id="close-bill" style="flex: 1; min-width: 120px; max-width: 180px; align-items: center !important; justify-content: center !important; ">
         <i class="fas fa-times"></i> Close
       </button>
-      <button class="btn btn-warning" id="toggle-print-footer">
+      <button class="btn btn-whatsapp" id="send-whatsapp" style="flex: 1; min-width: 120px; max-width: 180px; align-items: center !important; justify-content: center !important; ">
+        <i class="fab fa-whatsapp"></i> Send by WhatsApp
+      </button>
+      <button class="btn btn-warning" id="toggle-print-footer" style="flex: 1; min-width: 120px; max-width: 180px; align-items: center !important; justify-content: center !important; ">
         <i class="fas fa-palette"></i> Toggle Footer
       </button>
-      <button class="btn btn-whatsapp" id="send-whatsapp" style="flex: 1; min-width: 120px; max-width: 160px;">
-        <i class="fab fa-whatsapp"></i> Send by WhatsApp
+      <button class="btn btn-dark" id="print-thermal" style="flex: 1; min-width: 120px; max-width: 180px; align-items: center !important; justify-content: center !important; ">
+        <i class="fas fa-print"></i> Print Receipt
       </button>
     </div>
   </div>
@@ -2060,6 +2069,172 @@ document.addEventListener('DOMContentLoaded', function() {
     
     return billData;
   }
+  
+  // --- THERMAL PRINTING FUNCTIONS ---
+  
+  /**
+   * Generates a plain text string formatted for a thermal receipt printer.
+   * This version is more compact with no extra vertical space between items.
+   * @param {object} billData - The bill data object.
+   * @returns {string} - A formatted string for the receipt.
+   */
+  function generateThermalReceiptHTML(billData) {
+    const LINE_WIDTH = 42; // Approx. characters for 80mm paper, adjust as needed
+    let receipt = '';
+
+    // Helper functions for formatting
+    const center = (text) => text.padStart(Math.floor((LINE_WIDTH + text.length) / 2), ' ').padEnd(LINE_WIDTH, ' ');
+    const line = (char = '-') => char.repeat(LINE_WIDTH);
+    const twoCols = (left, right) => left.padEnd(LINE_WIDTH - right.length) + right;
+
+    // Receipt Header
+    receipt += center('Spice Garden') + '\n';
+    receipt += center('Taste the authentic flavors of India') + '\n\n';
+    receipt += twoCols(`Bill No: ${billData.billNumber}`, `Date: ${new Date(billData.date).toLocaleDateString('en-IN')}`) + '\n';
+    receipt += twoCols(`Table: ${billData.table}`, `Time: ${new Date(billData.date).toLocaleTimeString('en-IN', {hour: '2-digit', minute:'2-digit'})}`) + '\n';
+    receipt += line() + '\n'; // Changed to a single newline for tighter header
+    
+    // Order Items - COMPACT LAYOUT
+    billData.order.forEach(item => {
+      const addonsPrice = (item.addOns || []).reduce((sum, addon) => sum + addon.price, 0);
+      const baseItemPrice = item.price;
+      const currentItemPrice = billData.happyHourDiscount > 0 ? baseItemPrice * 0.8 : baseItemPrice;
+      const itemTotal = (currentItemPrice + addonsPrice) * item.quantity;
+      
+      // 1. Print the item name, wrapping if it's too long.
+      let itemName = item.name;
+      while (itemName.length > LINE_WIDTH) {
+          let wrapIndex = itemName.lastIndexOf(' ', LINE_WIDTH);
+          if (wrapIndex === -1) wrapIndex = LINE_WIDTH; // Force break if no space found
+          receipt += itemName.substring(0, wrapIndex) + '\n';
+          itemName = itemName.substring(wrapIndex).trim();
+      }
+      receipt += itemName + '\n';
+
+      // 2. Print the quantity, price, and total on a new, indented line.
+      const detailsLeft = `  ${item.quantity} x ${ (currentItemPrice + addonsPrice).toFixed(2) }`;
+      const detailsRight = itemTotal.toFixed(2);
+      receipt += twoCols(detailsLeft, detailsRight) + '\n';
+      
+      // 3. Print add-ons and notes, indented further.
+      if (item.addOns && item.addOns.length > 0) {
+        item.addOns.forEach(addon => {
+          receipt += `    + ${addon.name}\n`;
+        });
+      }
+      if (item.note) {
+        let noteText = `    Note: ${item.note}`;
+        // Simple word wrap for long notes
+        while (noteText.length > LINE_WIDTH) {
+            let wrapIndex = noteText.lastIndexOf(' ', LINE_WIDTH);
+            if (wrapIndex === -1) wrapIndex = LINE_WIDTH;
+            receipt += noteText.substring(0, wrapIndex) + '\n';
+            noteText = '    ' + noteText.substring(wrapIndex).trim();
+        }
+        receipt += noteText + '\n';
+      }
+    });
+
+    // Summary
+    receipt += line() + '\n';
+    receipt += twoCols('Subtotal:', `Rs ${billData.subtotal.toFixed(2)}`) + '\n';
+    if (billData.happyHourDiscount > 0) receipt += twoCols('Happy Hour Savings:', `Rs -${billData.happyHourDiscount.toFixed(2)}`) + '\n';
+    if (billData.discount > 0) receipt += twoCols('Discount:', `Rs -${billData.discount.toFixed(2)}`) + '\n';
+    if (billData.packingCharge > 0) receipt += twoCols('Packing Charge:', `Rs ${billData.packingCharge.toFixed(2)}`) + '\n';
+    if (billData.handlingFee > 0) receipt += twoCols('Handling Fee:', `Rs ${billData.handlingFee.toFixed(2)}`) + '\n';
+    if (billData.ecoSaverCharge > 0) receipt += twoCols('Eco-Saver Charge:', `Rs ${billData.ecoSaverCharge.toFixed(2)}`) + '\n';
+    if (billData.convenienceFee > 0) receipt += twoCols('Convenience Fee:', `Rs ${billData.convenienceFee.toFixed(2)}`) + '\n';
+
+    receipt += twoCols('CGST (2.5%):', `Rs ${billData.cgst.toFixed(2)}`) + '\n';
+    receipt += twoCols('SGST (2.5%):', `Rs ${billData.sgst.toFixed(2)}`) + '\n';
+    if(billData.roundOffValue && billData.roundOffValue.toFixed(2) != 0.00) receipt += twoCols('Round Off:', `Rs ${billData.roundOffValue.toFixed(2)}`) + '\n';
+    receipt += line('=') + '\n';
+    receipt += twoCols('TOTAL:', `Rs ${billData.netTotal.toFixed(2)}`) + '\n';
+    receipt += line('=') + '\n\n';
+
+    // Footer
+    receipt += center('Thank you for your visit!') + '\n';
+    receipt += center('Please come again!') + '\n';
+
+    // Return the HTML-escaped content for the <pre> tag
+    return receipt.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  
+  /**
+   * Creates a hidden iframe with the current order's thermal receipt content and triggers printing.
+   */
+  function printThermalReceipt() {
+    if (currentOrder.length === 0) {
+        alert("Cannot print an empty receipt.");
+        return;
+    }
+    const billData = getBillData();
+    printHistoricThermalReceipt(billData); // Reuse the historic printing logic
+  }
+  
+  /**
+   * Creates a hidden iframe with a specific order's thermal receipt content and triggers printing.
+   * @param {object} billData - The specific bill data object to print.
+   */
+  function printHistoricThermalReceipt(billData) {
+      if (!billData) {
+          alert("Order data is missing. Cannot print.");
+          return;
+      }
+      const receiptContent = generateThermalReceiptHTML(billData);
+
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      const doc = iframe.contentWindow.document;
+      doc.open();
+      doc.write(`
+          <html>
+            <head>
+              <title>Print Receipt - ${billData.billNumber}</title>
+              <style>
+                  @page { 
+                      size: 80mm auto;
+                      margin: 3mm; 
+                  }
+                  body { 
+                      font-family: 'Courier New', Courier, monospace;
+                      font-size: 10pt;
+                      line-height: 1.3;
+                      margin: 0;
+                      padding: 0;
+                  }
+                  pre {
+                      margin: 0;
+                      padding: 0;
+                      white-space: pre-wrap;
+                      word-wrap: break-word;
+                  }
+              </style>
+            </head>
+            <body>
+              <pre>${receiptContent}</pre>
+            </body>
+          </html>
+      `);
+      doc.close();
+
+      iframe.onload = function() {
+          try {
+              iframe.contentWindow.focus();
+              iframe.contentWindow.print();
+          } catch (e) {
+              console.error("Printing failed:", e);
+              alert("Could not open print dialog. Please check your browser's popup settings.");
+          } finally {
+              setTimeout(() => {
+                  document.body.removeChild(iframe);
+              }, 500);
+          }
+      };
+  }
+
 
   function loadRecentOrders() {
     recentOrdersList.innerHTML = '';
@@ -2117,6 +2292,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="order-card-actions">
           <button class="btn btn-primary btn-sm view-order" data-index="${index}"><i class="fas fa-eye"></i> View</button>
           <button class="btn btn-whatsapp btn-sm resend-order" data-index="${index}"><i class="fab fa-whatsapp"></i> Resend</button>
+          <button class="btn btn-dark btn-sm print-historic-thermal" data-index="${index}"><i class="fas fa-print"></i> Re-print Receipt</button>
         </div>
       `;
       recentOrdersList.appendChild(orderCard);
@@ -2311,6 +2487,8 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.getElementById('print-bill').addEventListener('click', generateBill);
     
+    document.getElementById('print-thermal').addEventListener('click', printThermalReceipt);
+    
     document.getElementById('send-whatsapp').addEventListener('click', function() {
       if (currentOrder.length === 0) {
         alert("Cannot send an empty bill.");
@@ -2421,6 +2599,13 @@ ${itemsList.trim()}
         resendOrder(resendBtn.dataset.index);
       }
       
+      const printBtn = e.target.closest('.print-historic-thermal');
+      if (printBtn) {
+          const orderIndex = printBtn.dataset.index;
+          const orderData = orders[orderIndex];
+          printHistoricThermalReceipt(orderData);
+      }
+
       const dateSelectBtn = e.target.closest('.date-select-btn');
       if (dateSelectBtn) {
         const date = dateSelectBtn.dataset.date;
