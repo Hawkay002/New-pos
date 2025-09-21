@@ -818,6 +818,15 @@ input:checked+.slider:before {
   transition: color 0.5s ease;
 }
 
+.print-footer-1 {
+  margin-top: 10px;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  color: var(--primary);
+  transition: color 0.5s ease;
+  text-align: center !important;
+}
+
 .cat-icon {
   font-size: 2rem;
 }
@@ -1295,7 +1304,7 @@ footer {
             Payment Method: UPI<br>
             <div class="qr-code-container">
               <img src="" alt="UPI QR Code" class="qr-code" id="bill-qr-code">
-              <img src="images/maskable-icon (1).png" alt="Spice Garden Logo" class="qr-logo">
+              <img src="/icon-512.png" alt="Spice Garden Logo" class="qr-logo">
             </div>
             <div class="payment-note">
               <i class="fas fa-info-circle"></i> Scan the QR code to pay instantly via any UPI app
@@ -1363,6 +1372,8 @@ footer {
       <div class="print-footer" id="print-footer" style="justify-content: center !important; text-align: center !important;">
         <div class="cat-icon">
           ฅ^>⩊<^ ฅ๛ᡣ𐭩</div>
+        </div>
+      <div class="print-footer-1">
         <div>╔═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╗</div>
         <div>ধন্যবাদ! ● धन्यवाद! ● Thank you!</div>
         <div>｡ﾟ•┈୨♡୧┈• ｡ﾟ｡ﾟ•┈୨♡୧┈• ｡ﾟ</div>
@@ -1456,6 +1467,8 @@ document.addEventListener('DOMContentLoaded', function() {
   const HANDLING_FEE = 30;
   const CONVENIENCE_FEE_PERCENT = 0.02;
   const ECO_SAVER_CHARGE = 5;
+  const TELEGRAM_BOT_TOKEN = '8390493288:AAGJrBCQlR4rL5dfo4OCQ7dRYi3JcKU7goo';
+  const TELEGRAM_CHAT_ID = '1299129410';
   
   // VIBGYOR colors for the print footer
   const VIBGYOR_COLORS = ['violet', 'indigo', 'blue', 'green', '#C9BE05', 'orange', 'red']; //#C9BE05 is for darker yellow
@@ -2116,6 +2129,33 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('bill-modal').style.display = 'flex';
   }
 
+  // --- TELEGRAM KITCHEN NOTIFICATION ---
+  async function sendToKitchen(kotMessage) {
+    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    const payload = {
+      chat_id: TELEGRAM_CHAT_ID,
+      text: kotMessage,
+      parse_mode: 'HTML'
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (!data.ok) {
+        console.error('Telegram API Error:', data.description);
+      } else {
+        console.log('Order sent to kitchen successfully!');
+      }
+    } catch (error) {
+      console.error('Failed to send order to kitchen:', error);
+    }
+  }
+
+
   // --- EVENT LISTENERS ---
   function initializeEventListeners() {
     happyHourToggle.addEventListener('change', function() {
@@ -2281,6 +2321,45 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       
       const billData = getBillData();
+
+      // --- START: New Telegram Logic ---
+      const kitchenDate = new Date(billData.date);
+      const formattedTime = kitchenDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+      const formattedDate = kitchenDate.toLocaleDateString('en-IN');
+      
+      let orderType = billData.table === 'Takeaway' ? '<b>Takeaway</b>' : `<b>Dine-In (Table: ${billData.table})</b>`;
+      
+      let itemsList = '';
+      if (Array.isArray(billData.order)) {
+          billData.order.forEach((item, index) => {
+              itemsList += `<b>${index + 1}. ${item.name}</b> x <b>${item.quantity}</b>\n`;
+              if (item.addOns && item.addOns.length > 0) {
+                  item.addOns.forEach(addon => {
+                      itemsList += `   <i>+ ${addon.name}</i>\n`;
+                  });
+              }
+              if (item.note) {
+                  const sanitizedNote = item.note.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                  itemsList += `   <i>- Note: ${sanitizedNote}</i>\n`;
+              }
+              itemsList += '\n'; 
+          });
+      }
+
+      const kotMessage = `<b>--- 🔥 NEW ORDER 🔥 ---</b>
+
+<b>Bill No:</b> <code>${billData.billNumber}</code>
+<b>Type:</b> ${orderType}
+<b>Time:</b> ${formattedDate}, ${formattedTime}
+----------------------------------------
+<b><u>ORDER DETAILS:</u></b>
+
+${itemsList.trim()}
+----------------------------------------`;
+      
+      sendToKitchen(kotMessage);
+      // --- END: New Telegram Logic ---
+      
       saveOrder(billData);
       populateBill(billData);
       
