@@ -1214,7 +1214,7 @@ footer {
         </div>
         <div class="form-group">
           <label class="form-label">Customer Phone:</label>
-          <input type="tel" class="form-control" id="customer-phone" placeholder="Enter customer phone">
+          <input type="tel" class="form-control" id="customer-phone" placeholder="Enter phone or '0000' for walk-in">
         </div>
         <div class="action-buttons">
           <button class="btn btn-primary" id="print-bill">
@@ -1387,7 +1387,7 @@ footer {
         <div>ধন্যবাদ! ● धन्यवाद! ● Thank you!</div>
         <div>｡ﾟ•┈୨♡୧┈• ｡ﾟ｡ﾟ•┈୨♡୧┈• ｡ﾟ</div>
         <div>দয়া করে আবার আসবেন! ● कृपया फिर आइएगा! ● Please come again!</div>
-        <div>╚═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╝</div>
+        <div>╚═*.·:·.✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦.·:·.*═╝</div>
       </div>
       <div class="bill-fee-explanations" id="bill-fee-explanations">
         <div class="fee-explanation-item" id="packing-charge-explanation" style="display: none;">
@@ -1491,6 +1491,7 @@ document.addEventListener('DOMContentLoaded', function() {
   let isViewMode = false;
   let currentOrder = [];
   let isHappyHour = false;
+  let finalizedBillData = null; // To prevent duplicate bill generation for the same order
 
   // --- DOM ELEMENT REFERENCES ---
   const menuGrid = document.getElementById('menu-grid');
@@ -1658,6 +1659,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // --- ORDER MANAGEMENT LOGIC ---
   function addItemToOrder(item, selectedAddons, quantity = 1) {
+    finalizedBillData = null; // Any change to the order resets the finalized bill
     const sortedAddonKeys = selectedAddons.sort();
     const existingOrderItem = currentOrder.find(orderItem => 
       orderItem.itemId === item.id && 
@@ -1686,6 +1688,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function updateItemQuantity(orderItemId, action) {
+    finalizedBillData = null; // Any change to the order resets the finalized bill
     const itemIndex = currentOrder.findIndex(item => item.id === orderItemId);
     if (itemIndex === -1) return;
     
@@ -1698,6 +1701,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function setItemQuantity(itemId, newQuantity) {
+    finalizedBillData = null; // Any change to the order resets the finalized bill
     let foundItemWithoutAddonsOrNote = false;
     
     for (let item of currentOrder) {
@@ -1858,7 +1862,9 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // --- BILL GENERATION & HANDLING ---
-  function getBillData() {
+  
+  // Creates the raw bill data object.
+  function createBillData() {
     const now = new Date();
     const billNumber = `BILL-${now.getDate().toString().padStart(2, '0')}${(now.getMonth()+1).toString().padStart(2, '0')}${now.getFullYear()}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}`;
     const billDate = now.toISOString();
@@ -1914,7 +1920,7 @@ document.addEventListener('DOMContentLoaded', function() {
     return {
       billNumber,
       customerName: document.getElementById('customer-name').value || 'Walk-in Customer',
-      customerPhone: document.getElementById('customer-phone').value || 'Not provided',
+      customerPhone: document.getElementById('customer-phone').value.trim() || 'Not provided',
       table: document.querySelector('[data-option="dine-in"]').classList.contains('active') ? document.getElementById('table-number').value : 'Takeaway',
       date: billDate,
       order: JSON.parse(JSON.stringify(currentOrder)),
@@ -1934,6 +1940,16 @@ document.addEventListener('DOMContentLoaded', function() {
       paymentMethod: document.querySelector('[data-payment="cash"]').classList.contains('active') ? 'Cash' : 'UPI',
       totalCalories
     };
+  }
+  
+  // This function ensures a bill is generated only ONCE for the current set of items.
+  function getFinalizedBillData() {
+    if (finalizedBillData) {
+      return finalizedBillData;
+    }
+    const billData = createBillData();
+    finalizedBillData = billData;
+    return billData;
   }
 
   function populateBill(billData) {
@@ -2047,6 +2063,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function resetOrder() {
     currentOrder = [];
+    finalizedBillData = null; // Reset the finalized bill data for the new order
     document.getElementById('discount-value').value = '';
     document.getElementById('customer-name').value = '';
     document.getElementById('customer-phone').value = '';
@@ -2054,69 +2071,62 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('bill-modal').style.display = 'none';
   }
 
-  function generateBill() {
+  function generateAndShowBill() {
     if (currentOrder.length === 0) {
       alert("Cannot generate an empty bill.");
       return;
     }
     
-    const billData = getBillData();
+    const billData = getFinalizedBillData();
     saveOrder(billData);
     populateBill(billData);
-    
     document.getElementById('bill-modal-actions').style.display = isViewMode ? 'none' : 'flex';
     document.getElementById('bill-modal').style.display = 'flex';
-    
-    return billData;
   }
   
   // --- THERMAL PRINTING FUNCTIONS ---
-  
-  /**
-   * Generates a plain text string formatted for a thermal receipt printer.
-   * This version is more compact with no extra vertical space between items.
-   * @param {object} billData - The bill data object.
-   * @returns {string} - A formatted string for the receipt.
-   */
   function generateThermalReceiptHTML(billData) {
-    const LINE_WIDTH = 42; // Approx. characters for 80mm paper, adjust as needed
+    const LINE_WIDTH = 42; 
     let receipt = '';
 
-    // Helper functions for formatting
     const center = (text) => text.padStart(Math.floor((LINE_WIDTH + text.length) / 2), ' ').padEnd(LINE_WIDTH, ' ');
     const line = (char = '-') => char.repeat(LINE_WIDTH);
     const twoCols = (left, right) => left.padEnd(LINE_WIDTH - right.length) + right;
 
-    // Receipt Header
     receipt += center('Spice Garden') + '\n';
     receipt += center('Taste the authentic flavors of India') + '\n\n';
     receipt += twoCols(`Bill No: ${billData.billNumber}`, `Date: ${new Date(billData.date).toLocaleDateString('en-IN')}`) + '\n';
     receipt += twoCols(`Table: ${billData.table}`, `Time: ${new Date(billData.date).toLocaleTimeString('en-IN', {hour: '2-digit', minute:'2-digit'})}`) + '\n';
-    receipt += line() + '\n'; // Changed to a single newline for tighter header
+    receipt += line() + '\n';
     
-    // Order Items - COMPACT LAYOUT
+    if (billData.customerName && billData.customerName !== 'Walk-in Customer') {
+        receipt += `Customer: ${billData.customerName}\n`;
+    }
+    if (billData.customerPhone && !['Not provided', '0000'].includes(billData.customerPhone)) {
+        receipt += `Phone   : ${billData.customerPhone}         `;
+    }
+    receipt += `Payment : ${billData.paymentMethod}\n`;
+    receipt += line() + '\n';
+    
     billData.order.forEach(item => {
       const addonsPrice = (item.addOns || []).reduce((sum, addon) => sum + addon.price, 0);
       const baseItemPrice = item.price;
       const currentItemPrice = billData.happyHourDiscount > 0 ? baseItemPrice * 0.8 : baseItemPrice;
       const itemTotal = (currentItemPrice + addonsPrice) * item.quantity;
       
-      // 1. Print the item name, wrapping if it's too long.
       let itemName = item.name;
       while (itemName.length > LINE_WIDTH) {
           let wrapIndex = itemName.lastIndexOf(' ', LINE_WIDTH);
-          if (wrapIndex === -1) wrapIndex = LINE_WIDTH; // Force break if no space found
+          if (wrapIndex === -1) wrapIndex = LINE_WIDTH;
           receipt += itemName.substring(0, wrapIndex) + '\n';
           itemName = itemName.substring(wrapIndex).trim();
       }
       receipt += itemName + '\n';
 
-      // 2. Print the quantity, price, and total on a new, indented line.
       const detailsLeft = `  ${item.quantity} x ${ (currentItemPrice + addonsPrice).toFixed(2) }`;
       const detailsRight = itemTotal.toFixed(2);
       receipt += twoCols(detailsLeft, detailsRight) + '\n';
       
-      // 3. Print add-ons and notes, indented further.
       if (item.addOns && item.addOns.length > 0) {
         item.addOns.forEach(addon => {
           receipt += `    + ${addon.name}\n`;
@@ -2124,7 +2134,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
       if (item.note) {
         let noteText = `    Note: ${item.note}`;
-        // Simple word wrap for long notes
         while (noteText.length > LINE_WIDTH) {
             let wrapIndex = noteText.lastIndexOf(' ', LINE_WIDTH);
             if (wrapIndex === -1) wrapIndex = LINE_WIDTH;
@@ -2135,7 +2144,6 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
 
-    // Summary
     receipt += line() + '\n';
     receipt += twoCols('Subtotal:', `Rs ${billData.subtotal.toFixed(2)}`) + '\n';
     if (billData.happyHourDiscount > 0) receipt += twoCols('Happy Hour Savings:', `Rs -${billData.happyHourDiscount.toFixed(2)}`) + '\n';
@@ -2144,38 +2152,28 @@ document.addEventListener('DOMContentLoaded', function() {
     if (billData.handlingFee > 0) receipt += twoCols('Handling Fee:', `Rs ${billData.handlingFee.toFixed(2)}`) + '\n';
     if (billData.ecoSaverCharge > 0) receipt += twoCols('Eco-Saver Charge:', `Rs ${billData.ecoSaverCharge.toFixed(2)}`) + '\n';
     if (billData.convenienceFee > 0) receipt += twoCols('Convenience Fee:', `Rs ${billData.convenienceFee.toFixed(2)}`) + '\n';
-
     receipt += twoCols('CGST (2.5%):', `Rs ${billData.cgst.toFixed(2)}`) + '\n';
     receipt += twoCols('SGST (2.5%):', `Rs ${billData.sgst.toFixed(2)}`) + '\n';
     if(billData.roundOffValue && billData.roundOffValue.toFixed(2) != 0.00) receipt += twoCols('Round Off:', `Rs ${billData.roundOffValue.toFixed(2)}`) + '\n';
     receipt += line('=') + '\n';
     receipt += twoCols('TOTAL:', `Rs ${billData.netTotal.toFixed(2)}`) + '\n';
     receipt += line('=') + '\n\n';
-
-    // Footer
     receipt += center('Thank you for your visit!') + '\n';
     receipt += center('Please come again!') + '\n';
 
-    // Return the HTML-escaped content for the <pre> tag
     return receipt.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
   
-  /**
-   * Creates a hidden iframe with the current order's thermal receipt content and triggers printing.
-   */
   function printThermalReceipt() {
     if (currentOrder.length === 0) {
         alert("Cannot print an empty receipt.");
         return;
     }
-    const billData = getBillData();
-    printHistoricThermalReceipt(billData); // Reuse the historic printing logic
+    const billData = getFinalizedBillData();
+    saveOrder(billData);
+    printHistoricThermalReceipt(billData); 
   }
   
-  /**
-   * Creates a hidden iframe with a specific order's thermal receipt content and triggers printing.
-   * @param {object} billData - The specific bill data object to print.
-   */
   function printHistoricThermalReceipt(billData) {
       if (!billData) {
           alert("Order data is missing. Cannot print.");
@@ -2235,7 +2233,6 @@ document.addEventListener('DOMContentLoaded', function() {
       };
   }
 
-
   function loadRecentOrders() {
     recentOrdersList.innerHTML = '';
     
@@ -2266,13 +2263,13 @@ document.addEventListener('DOMContentLoaded', function() {
         order.order.forEach(item => {
           const addonsPrice = (item.addOns || []).reduce((sum, addon) => sum + addon.price, 0);
           const baseItemPrice = item.price;
-          // Check if happy hour was active for this historic order
           const currentItemPrice = order.happyHourDiscount > 0 ? baseItemPrice * 0.8 : baseItemPrice;
           
           orderItemsHtml += `<div class="order-card-item"><span>${item.name} x${item.quantity}</span><span>₹${((currentItemPrice + addonsPrice) * item.quantity).toFixed(2)}</span></div>`;
         });
       }
       
+      const canResend = order.customerPhone && order.customerPhone !== 'Not provided' && order.customerPhone !== '0000';
       const orderCard = document.createElement('div');
       orderCard.className = 'order-card';
       orderCard.dataset.date = orderDateString;
@@ -2291,7 +2288,7 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="order-card-total">Total: ₹${order.netTotal.toFixed(2)}</div>
         <div class="order-card-actions">
           <button class="btn btn-primary btn-sm view-order" data-index="${index}"><i class="fas fa-eye"></i> View</button>
-          <button class="btn btn-whatsapp btn-sm resend-order" data-index="${index}"><i class="fab fa-whatsapp"></i> Resend</button>
+          ${canResend ? `<button class="btn btn-whatsapp btn-sm resend-order" data-index="${index}"><i class="fab fa-whatsapp"></i> Resend</button>` : ''}
           <button class="btn btn-dark btn-sm print-historic-thermal" data-index="${index}"><i class="fas fa-print"></i> Re-print Receipt</button>
         </div>
       `;
@@ -2485,25 +2482,26 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
     
-    document.getElementById('print-bill').addEventListener('click', generateBill);
+    document.getElementById('print-bill').addEventListener('click', generateAndShowBill);
     
     document.getElementById('print-thermal').addEventListener('click', printThermalReceipt);
     
     document.getElementById('send-whatsapp').addEventListener('click', function() {
       if (currentOrder.length === 0) {
-        alert("Cannot send an empty bill.");
+        alert("Cannot process an empty order.");
         return;
       }
-      
-      const customerPhone = document.getElementById('customer-phone').value;
+    
+      const customerPhone = document.getElementById('customer-phone').value.trim();
       if (!customerPhone) {
-        alert('Please enter customer phone number to send via WhatsApp');
+        alert('Please enter a customer phone number, or use "0000" for walk-in customers.');
         return;
       }
-      
-      const billData = getBillData();
-
-      // --- START: New Telegram Logic ---
+    
+      const billData = getFinalizedBillData();
+      const isWalkIn = customerPhone === '0000';
+    
+      const sanitizedCustomerName = billData.customerName.replace(/</g, "&lt;").replace(/>/g, "&gt;");
       const kitchenDate = new Date(billData.date);
       const formattedTime = kitchenDate.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
       const formattedDate = kitchenDate.toLocaleDateString('en-IN');
@@ -2512,24 +2510,25 @@ document.addEventListener('DOMContentLoaded', function() {
       
       let itemsList = '';
       if (Array.isArray(billData.order)) {
-          billData.order.forEach((item, index) => {
-              itemsList += `<b>${index + 1}. ${item.name}</b> x <b>${item.quantity}</b>\n`;
-              if (item.addOns && item.addOns.length > 0) {
-                  item.addOns.forEach(addon => {
-                      itemsList += `   <i>+ ${addon.name}</i>\n`;
-                  });
-              }
-              if (item.note) {
-                  const sanitizedNote = item.note.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                  itemsList += `   <i>- Note: ${sanitizedNote}</i>\n`;
-              }
-              itemsList += '\n'; 
-          });
+        billData.order.forEach((item, index) => {
+          itemsList += `<b>${index + 1}. ${item.name}</b> x <b>${item.quantity}</b>\n`;
+          if (item.addOns && item.addOns.length > 0) {
+            item.addOns.forEach(addon => {
+              itemsList += `   <i>+ ${addon.name}</i>\n`;
+            });
+          }
+          if (item.note) {
+            const sanitizedNote = item.note.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            itemsList += `   <i>- Note: ${sanitizedNote}</i>\n`;
+          }
+          itemsList += '\n'; 
+        });
       }
-
+    
       const kotMessage = `<b>--- 🔥 NEW ORDER 🔥 ---</b>
 
 <b>Bill No:</b> <code>${billData.billNumber}</code>
+<b>Customer:</b> ${sanitizedCustomerName}
 <b>Type:</b> ${orderType}
 <b>Time:</b> ${formattedDate}, ${formattedTime}
 ----------------------------------------
@@ -2539,14 +2538,12 @@ ${itemsList.trim()}
 ----------------------------------------`;
       
       sendToKitchen(kotMessage);
-      // --- END: New Telegram Logic ---
-      
       saveOrder(billData);
       populateBill(billData);
       
       const billContent = document.getElementById('bill-content');
       const billActions = document.getElementById('bill-modal-actions');
-      billActions.style.display = 'none'; // Hide buttons before capture
+      billActions.style.display = 'none';
       
       const originalStyles = {
         maxHeight: billContent.style.maxHeight,
@@ -2563,31 +2560,35 @@ ${itemsList.trim()}
         height: billContent.scrollHeight,
         scale: 5
       }).then(canvas => {
-        billActions.style.display = 'flex'; // Show buttons again
+        billActions.style.display = 'flex';
         billContent.style.maxHeight = originalStyles.maxHeight;
         billContent.style.overflowY = originalStyles.overflowY;
         
-        const link = document.createElement('a');
-        link.download = `${billData.billNumber}.png`;
-        link.href = canvas.toDataURL('image/png');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        let formattedPhone = customerPhone;
-        if (!formattedPhone.startsWith('+')) {
-          formattedPhone = formattedPhone.replace(/\D/g, '');
-          if (!formattedPhone.startsWith('91') && formattedPhone.length === 10) formattedPhone = '91' + formattedPhone;
-          formattedPhone = '+' + formattedPhone;
+        if (isWalkIn) {
+            alert('Bill for walk-in customer has been saved.');
+        } else {
+            const link = document.createElement('a');
+            link.download = `${billData.billNumber}.png`;
+            link.href = canvas.toDataURL('image/png');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            let formattedPhone = customerPhone;
+            if (!formattedPhone.startsWith('+')) {
+              formattedPhone = formattedPhone.replace(/\D/g, '');
+              if (!formattedPhone.startsWith('91') && formattedPhone.length === 10) formattedPhone = '91' + formattedPhone;
+              formattedPhone = '+' + formattedPhone;
+            }
+            
+            const message = `Thank you for dining at Spice Garden! Here is your bill: ${billData.billNumber}`;
+            window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank');
         }
-        
-        const message = `Thank you for dining at Spice Garden! Here is your bill: ${billData.billNumber}`;
-        window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank');
         
         resetOrder();
       });
     });
-    
+
     recentOrdersList.addEventListener('click', function(e) {
       const viewBtn = e.target.closest('.view-order');
       if (viewBtn) {
@@ -2725,12 +2726,8 @@ ${itemsList.trim()}
     
     document.getElementById('new-order').addEventListener('click', resetOrder);
     
-    // Toggle print footer functionality
     document.getElementById('toggle-print-footer').addEventListener('click', function() {
-      // Cycle through VIBGYOR colors
       currentColorIndex = (currentColorIndex + 1) % VIBGYOR_COLORS.length;
-      
-      // Toggle visibility and update color
       if (printFooter.style.display === 'none') {
         printFooter.style.display = 'block';
         printFooter.style.color = VIBGYOR_COLORS[currentColorIndex];
@@ -2741,6 +2738,11 @@ ${itemsList.trim()}
   }
   
   function saveOrder(orderData) {
+    if (!orderData || !orderData.billNumber) return;
+    const alreadyExists = orders.some(o => o.billNumber === orderData.billNumber);
+    if (alreadyExists) {
+        return; // Don't save duplicates
+    }
     orders.unshift(orderData);
     localStorage.setItem('spiceGardenOrders', JSON.stringify(orders));
   }
@@ -2753,7 +2755,7 @@ ${itemsList.trim()}
     const billContent = document.getElementById('bill-content');
     const billActions = document.getElementById('bill-modal-actions');
     
-    billActions.style.display = 'none'; // Hide buttons before capture
+    billActions.style.display = 'none'; 
     billModal.style.display = 'flex';
     
     const originalStyles = {
@@ -2771,7 +2773,7 @@ ${itemsList.trim()}
       height: billContent.scrollHeight,
       scale: 3
     }).then(canvas => {
-      billActions.style.display = 'flex'; // Show buttons again
+      billActions.style.display = 'flex';
       billModal.style.display = 'none';
       billContent.style.maxHeight = originalStyles.maxHeight;
       billContent.style.overflowY = originalStyles.overflowY;
@@ -2786,18 +2788,19 @@ ${itemsList.trim()}
       link.click();
       document.body.removeChild(link);
       
-      let formattedPhone = order.customerPhone;
-      if (formattedPhone && formattedPhone !== 'Not provided') {
+      const customerPhone = order.customerPhone ? order.customerPhone.trim() : '';
+  
+      if (customerPhone && customerPhone !== 'Not provided' && customerPhone !== '0000') {
+        let formattedPhone = customerPhone;
         if (!formattedPhone.startsWith('+')) {
           formattedPhone = formattedPhone.replace(/\D/g, '');
           if (!formattedPhone.startsWith('91') && formattedPhone.length === 10) formattedPhone = '91' + formattedPhone;
           formattedPhone = '+' + formattedPhone;
         }
-        
         const message = `Thank you for dining at Spice Garden! Here is your bill: ${order.billNumber}`;
         window.open(`https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`, '_blank');
       } else {
-        alert('Customer phone number not available for this order, but the bill has been downloaded.');
+        alert('Customer phone number not available for this order, but the bill has been re-downloaded.');
       }
     });
   }
